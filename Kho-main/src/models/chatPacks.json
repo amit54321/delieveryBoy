@@ -1,0 +1,229 @@
+{
+  "chats": [
+    {
+      "chatId": 0,
+      "chatType": "text",
+      "chatText": "Hi"
+    },
+    {
+      "chatId": 1,
+      "chatType": "text",
+      "chatText": "How are you"
+    },
+    {
+      "chatId": 2,
+      "chatType": "text",
+      "chatText": "Can you do it"
+    },
+    {
+      "chatId": 3,
+      "chatType": "text",
+      "chatText": "Hurry up"
+    },
+    {
+      "chatId": 4,
+      "chatType": "text",
+      "chatText": "What's up"
+    },
+    {
+      "chatId": 5,
+      "chatType": "text",
+      "chatText": "Can you do that"
+    },
+    {
+      "chatId": 6,
+      "chatType": "text",
+      "chatText": "Don't give up"
+    },
+    {
+      "chatId": 7,
+      "chatType": "text",
+      "chatText": "Shout it out!"
+    },
+    {
+      "chatId": 8,
+      "chatType": "text",
+      "chatText": "Never lose"
+    },
+    {
+      "chatId": 9,
+      "chatType": "text",
+      "chatText": "Enjoy the fun"
+    },
+    {
+      "chatId": 10,
+      "chatType": "text",
+      "chatText": "Make more moves"
+    },
+    {
+      "chatId": 11,
+      "chatType": "text",
+      "chatText": "Play better"
+    },
+    {
+      "chatId": 12,
+      "chatType": "text",
+      "chatText": "Cheer up"
+    },
+    {
+      "chatId": 13,
+      "chatType": "text",
+      "chatText": "Nice job"
+    },
+    {
+      "chatId": 14,
+      "chatType": "text",
+      "chatText": "You can do better"
+    },
+    {
+      "chatId": 15,
+      "chatType": "text",
+      "chatText": "Great"
+    },
+    {
+      "chatId": 16,
+      "chatType": "text",
+      "chatText": "Awesome"
+    },
+    {
+      "chatId": 17,
+      "chatType": "text",
+      "chatText": "Extra Ordinary"
+    },
+    {
+      "chatId": 18,
+      "chatType": "text",
+      "chatText": "Great move"
+    },
+    {
+      "chatId": 19,
+      "chatType": "text",
+      "chatText": "Amazing"
+    },
+    {
+      "chatId": 20,
+      "chatType": "text",
+      "chatText": "Have fun"
+    },
+    {
+      "chatId": 21,
+      "chatType": "text",
+      "chatText": "Make it happen."
+    },
+    {
+      "chatId": 22,
+      "chatType": "text",
+      "chatText": "Try again"
+    },
+    {
+      "chatId": 23,
+      "chatType": "text",
+      "chatText": "Greetings"
+    },
+    {
+      "chatId": 24,
+      "chatType": "text",
+      "chatText": "Bonjour"
+    },
+    {
+      "chatId": 25,
+      "chatType": "text",
+      "chatText": "Howdy"
+    },
+    {
+      "chatId": 26,
+      "chatType": "text",
+      "chatText": "Get going"
+    },
+    {
+      "chatId": 27,
+      "chatType": "text",
+      "chatText": "Stay ahead"
+    },
+    {
+      "chatId": 28,
+      "chatType": "text",
+      "chatText": "Hi there"
+    },
+    {
+      "chatId": 29,
+      "chatType": "text",
+      "chatText": "What's new"
+    },
+    {
+      "chatId": 30,
+      "chatType": "text",
+      "chatText": "What's happening"
+    },
+    {
+      "chatId": 31,
+      "chatType": "text",
+      "chatText": "How goes it"
+    },
+    {
+      "chatId": 32,
+      "chatType": "text",
+      "chatText": "How are things"
+    },
+    {
+      "chatId": 33,
+      "chatType": "text",
+      "chatText": "hey, what's up"
+    },
+    {
+      "chatId": 34,
+      "chatType": "text",
+      "chatText": "How are you doing"
+    },
+    {
+      "chatId": 35,
+      "chatType": "text",
+      "chatText": "What's going on"
+    },
+    {
+      "chatId": 36,
+      "chatType": "text",
+      "chatText": "Well met"
+    },
+    {
+      "chatId": 37,
+      "chatType": "text",
+      "chatText": "Regards"
+    },
+    {
+      "chatId": 38,
+      "chatType": "text",
+      "chatText": "How's trick"
+    },
+    {
+      "chatId": 39,
+      "chatType": "text",
+      "chatText": "Acknowledge"
+    },
+    {
+      "chatId": 40,
+      "chatType": "text",
+      "chatText": "Can you do so"
+    },
+    {
+      "chatId": 41,
+      "chatType": "text",
+      "chatText": "Can you handle it"
+    },
+    {
+      "chatId": 42,
+      "chatType": "text",
+      "chatText": "You manage it"
+    },
+    {
+      "chatId": 43,
+      "chatType": "text",
+      "chatText": "Yoy gonna get that"
+    },
+    {
+      "chatId": 44,
+      "chatType": "text",
+      "chatText": "You did this"
+    }
+  ]
+}

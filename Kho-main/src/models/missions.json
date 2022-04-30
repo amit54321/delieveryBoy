@@ -1,0 +1,100 @@
+{
+  "missions": [
+    {
+      "id": 0,
+      "type": "text",
+      "text": "Play 10 games",
+      "win": 100,
+      "value": 10,
+      "complete": 0
+    },
+    {
+      "id": 1,
+      "type": "text",
+      "text": "Play 50 games",
+      "win": 100,
+      "value": 50,
+      "complete": 0
+    },
+    {
+      "id": 2,
+      "type": "text",
+      "text": "Play 100 games",
+      "win": 100,
+      "value": 100,
+      "complete": 0
+    },
+    {
+      "id": 3,
+      "type": "text",
+      "text": "Win 10 games",
+      "win": 100,
+      "value": 10,
+      "complete": 0
+    },
+    {
+      "id": 4,
+      "type": "text",
+      "text": "Win 50 games",
+      "win": 300,
+      "value": 50,
+      "complete": 0
+    },
+    {
+      "id": 5,
+      "type": "text",
+      "text": "Win 100 games",
+      "win": 100,
+      "value": 100,
+      "complete": 0
+    },
+    {
+      "id": 6,
+      "type": "text",
+      "text": "Catch thief 10 times",
+      "win": 100,
+      "value": 10,
+      "complete": 0
+    },
+    {
+      "id": 7,
+      "type": "text",
+      "text": "Catch thief 100 times",
+      "win": 100,
+      "value": 100,
+      "complete": 0
+    },
+    {
+      "id": 8,
+      "type": "text",
+      "text": "Catch thief 500 times",
+      "win": 100,
+      "value": 500,
+      "complete": 0
+    },
+    {
+      "id": 9,
+      "type": "text",
+      "text": "Grab 10 coins",
+      "win": 100,
+      "value": 10,
+      "complete": 0
+    },
+    {
+      "id": 10,
+      "type": "text",
+      "text": "Grab 100 coins",
+      "win": 100,
+      "value": 100,
+      "complete": 0
+    },
+    {
+      "id": 11,
+      "type": "text",
+      "text": "Grab 500 coins",
+      "win": 100,
+      "value": 500,
+      "complete": 0
+    }
+  ]
+}
