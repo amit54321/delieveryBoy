@@ -234,8 +234,8 @@ async function makeAI(room, io) {
         {
           let p = new PegsData();
           p.id=i;
-          p.restaurantId =i;
-          p.customerId=1;
+          p.restaurantId =Math.floor(Math.random() * (10 - 1 + 1) + 1);
+          p.customerId=Math.floor(Math.random() * (10 - 1 + 1) + 1);
           gameplay.tasks.push(p);
         
         } 
@@ -435,8 +435,8 @@ async function lookForPublicRoom(obj, socket, io, cb) {
             {
               let p = new PegsData();
               p.id=i;
-              p.restaurantId =i;
-              p.customerId=1;
+              p.restaurantId =Math.floor(Math.random() * (10 - 1 + 1) + 1);
+              p.customerId=Math.floor(Math.random() * (10 - 1 + 1) + 1);
               gameplay.tasks.push(p);
              
             } 
@@ -553,8 +553,8 @@ async function joinRoom(obj, socket, io, cb) {
               {
                 let p = new PegsData();
                 p.id=i;
-                p.restaurantId =i;
-                p.customerId=1;
+                p.restaurantId =Math.floor(Math.random() * (10 - 1 + 1) + 1);
+                p.customerId=Math.floor(Math.random() * (10 - 1 + 1) + 1);
                 gameplay.tasks.push(p);
                
               } 
