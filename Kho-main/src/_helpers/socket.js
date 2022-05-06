@@ -105,6 +105,11 @@ module.exports = function (io) {
       console.log({ obj });
       await gamePlay.construct(io, obj, socket,cb);
     });
+
+    socket.on("SWAP", async (obj, cb) => {
+      console.log({ obj });
+      await gamePlay.swap(io, obj, socket,cb);
+    });
     socket.on("UPGRADE", async (obj, cb) => {
       console.log({ obj });
       await gamePlay.upgrade(io, obj, socket,cb);

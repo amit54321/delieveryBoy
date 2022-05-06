@@ -23,7 +23,7 @@ module.exports = {
 
 async function chat(obj, socket, io, cb) {
   let room = await Room.findById(obj.gameId);
-  //   console.log("pop user dffddf " +obj.gameId)
+    console.log("pop user dffddf " +obj.gameId)
   if (room) {
     io.to(room._id).emit("CHATCALLBACK", { chat: obj });
   }
@@ -240,6 +240,7 @@ async function makeAI(room, io) {
         
         } 
         gameplay.markModified("tasks");
+        gameplay.save();
         io.to(room._id).emit("STARTGAME", { status: 200, gameplay: gameplay });
         await gameplay.save();
       
@@ -441,6 +442,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
              
             } 
             gameplay.markModified("tasks");
+            gameplay.save();
             io.to(room._id).emit("STARTGAME", {
               status: 200,
               gameplay: gameplay,
@@ -559,6 +561,7 @@ async function joinRoom(obj, socket, io, cb) {
                
               } 
               gameplay.markModified("tasks");
+              gameplay.save();
               io.to(room._id).emit("STARTGAME", {
                 status: 200,
                 gameplay: gameplay,

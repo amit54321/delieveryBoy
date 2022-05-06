@@ -15,6 +15,7 @@ module.exports = {
   construct,
   upgrade,
   taskDone,
+  swap,
 };
 
 async function taskDone(io, obj) {
@@ -41,6 +42,54 @@ async function taskDone(io, obj) {
     
   }
 }
+
+async function swap(io, obj, socket, cb) {
+  console.log("swap calls " + obj.id);
+  let user = await User.findById(obj.id);
+  if (user) {
+
+   
+      if (!Array.isArray( user.restaurants)) {
+        user.restaurants = [];
+      }
+      let d1r ,d2r,d1l,d2l;
+      let index1,index2;
+      for(let i=0;i<user.restaurants.length;i++)
+      {
+        if(user.restaurants[i].plot_id==obj.plot_id1)
+        {
+          index1= i;
+           d1r = user.restaurants[i].restaurant_id;
+           d1l = user.restaurants[i].level;
+          for(let j=0;j<user.restaurants.length;j++)
+          {
+            if(user.restaurants[j].plot_id==obj.plot_id2)
+            {
+              index2= j;
+              d2r = user.restaurants[j].restaurant_id;
+              d2l = user.restaurants[j].level;
+              
+              i= user.restaurants.length;
+              break;
+            }
+          }
+
+        }
+      }
+      user.restaurants[index1].restaurant_id = d2r;
+      user.restaurants[index1].level =d2l;
+     
+      user.restaurants[index2].restaurant_id = d1r;
+      user.restaurants[index2].level =d1l;
+    //  console.log("construct calls " + d1.restaurant_id +"   d2  "+d2.restaurant_id);
+      user.markModified("restaurants");
+     await user.save();
+     io.to(user._id).emit("SWAPFINISH", { status: 200, message: obj });
+     io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
+    
+  }
+}
+
 
 async function construct(io, obj, socket, cb) {
   console.log("construct calls " + obj.id);
