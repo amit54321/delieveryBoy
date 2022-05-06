@@ -9,7 +9,7 @@ const user = require("../routers/user");
 
 const User = db.User;
 const Room = db.Room;
-
+const GamePlay = db.GamePlay;
 //const schedule = require('node-schedule');
 
 async function getKeyByValue(object, value) {
@@ -38,8 +38,24 @@ module.exports = function (io) {
       user.is_online=1;
       await user.save();
       socket.emit("UPDATEDUSER", { status: 200, message:user });
+    
+     
       socket.join(isRevoked);
    
+      if (user.game_id != null) {
+    
+        let gameplay = await GamePlay.findOne({ game_id: user.game_id });
+        if(gameplay )
+        {
+          socket.join(user.room_id._id);
+          socket .emit("STARTGAME", {
+          status: 200,
+          gameplay: gameplay,
+        });
+        }
+      }
+
+
 
       console.log(  " USER " +user);
     } catch (err) {

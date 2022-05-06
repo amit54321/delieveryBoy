@@ -25,6 +25,7 @@ async function chat(obj, socket, io, cb) {
   let room = await Room.findById(obj.gameId);
     console.log("pop user dffddf " +obj.gameId)
   if (room) {
+    console.log("pop user gameIdFind " +obj.gameId)
     io.to(room._id).emit("CHATCALLBACK", { chat: obj });
   }
 }
@@ -304,6 +305,7 @@ async function checkRoom(obj, socket, io, cb) {
     let timeLeft = room_already_connected.end_time - Date.now();
     let betsAmountMinimum = user.level * 100;
     let bets = [];
+    socket.join(user.room_id._id);
     bets.push(betsAmountMinimum, betsAmountMinimum * 2, betsAmountMinimum * 3);
     cb({
       status: 400,
