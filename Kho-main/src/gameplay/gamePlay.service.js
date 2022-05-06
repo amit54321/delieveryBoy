@@ -290,11 +290,10 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
     // else
 
     if (room.players_joined.length == 1) {
-    //  for (let i = 0; i < gameplay.collision.length; i++) {
-    //    if (userId != gameplay.collision[i].id) {
-          gameplay.winnerId = gameplay.collision[i].id;
-     //   }
-   //   }
+   
+          gameplay.winnerId = room.players_joined[0]._id;
+   
+          
       gameplay.save();
       io.to(room._id).emit("GAMEEND", { status: 200, gameplay: gameplay });
       await endGame(gameId, io);
