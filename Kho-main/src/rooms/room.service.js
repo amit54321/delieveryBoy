@@ -243,7 +243,8 @@ async function makeAI(room, io) {
         gameplay.markModified("tasks");
         gameplay.save();
         io.to(room._id).emit("STARTGAME", { status: 200, gameplay: gameplay });
-        await gameplay.save();
+      
+       
       
       } else {
       }
@@ -264,6 +265,21 @@ async function createAiUser() {
   user.role = "ai";
   user.avatar = "kaiser/" + (Math.floor(Math.random() * 4) + 0).toString();
   user.token = "Guest" + new Date().toISOString();
+  if (!Array.isArray( user.restaurants)) {
+    user.restaurants = [];
+  }
+  for(let i=1;i<=10;i++)
+  {
+
+    let data2 = {      
+      plot_id: i,
+      restaurant_id:i,
+      level:Math.floor(Math.random() * (10 - 1 + 1) + 1)
+    };
+    
+    user.restaurants.push(data2);
+    user.markModified("restaurants");
+  } 
   console.log("player created " + user.name);
   ai_user = await user.save();
   return user;
