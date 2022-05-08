@@ -27,31 +27,31 @@
     {
       "id": 3,
       "type": "text",
-      "text": "Win 10 games",
+      "text": "Construct 1 restaurant",
       "win": 100,
-      "value": 10,
+      "value": 1,
       "complete": 0
     },
     {
       "id": 4,
       "type": "text",
-      "text": "Win 50 games",
+      "text": "Construct 3 restaurants",
       "win": 300,
-      "value": 50,
+      "value": 3,
       "complete": 0
     },
     {
       "id": 5,
       "type": "text",
-      "text": "Win 100 games",
+      "text": "Construct 5 restaurants",
       "win": 100,
-      "value": 100,
+      "value": 5,
       "complete": 0
     },
     {
       "id": 6,
       "type": "text",
-      "text": "Catch thief 10 times",
+      "text": "Construct 10 restaurants",
       "win": 100,
       "value": 10,
       "complete": 0
@@ -59,41 +59,41 @@
     {
       "id": 7,
       "type": "text",
-      "text": "Catch thief 100 times",
+      "text": "Upgrade 1 restaurant",
       "win": 100,
-      "value": 100,
+      "value": 1,
       "complete": 0
     },
     {
       "id": 8,
       "type": "text",
-      "text": "Catch thief 500 times",
+      "text": "Win 1 match",
       "win": 100,
-      "value": 500,
+      "value": 1,
       "complete": 0
     },
     {
       "id": 9,
       "type": "text",
-      "text": "Grab 10 coins",
+      "text": "Win 5 matches",
       "win": 100,
-      "value": 10,
+      "value": 5,
       "complete": 0
     },
     {
       "id": 10,
       "type": "text",
-      "text": "Grab 100 coins",
+      "text": "Win 10 matches",
       "win": 100,
-      "value": 100,
+      "value": 10,
       "complete": 0
     },
     {
       "id": 11,
       "type": "text",
-      "text": "Grab 500 coins",
+      "text": "Win 25 matches",
       "win": 100,
-      "value": 500,
+      "value": 25,
       "complete": 0
     }
   ]
