@@ -214,13 +214,13 @@ async function upgrade(io, obj, socket, cb) {
         if(obj.plot_id == user.restaurants[j].plot_id)
         {
           l = user.restaurants[j].level;
-          user.restaurants[j].level= l+1;
-          user.markModified("restaurants");
-          await user.save()
+          user.restaurants[j].level= l+1;  
           break;
         }
 
       }
+      user.markModified("restaurants");
+      await user.save()
       let data2 = {      
         plot_id: obj.plot_id,
         restaurant_id:obj.restaurant_id,
