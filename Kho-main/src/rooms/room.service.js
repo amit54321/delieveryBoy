@@ -23,9 +23,9 @@ module.exports = {
 
 async function chat(obj, socket, io, cb) {
   let room = await Room.findById(obj.gameId);
-    console.log("pop user dffddf " +obj.gameId)
+    //console.log("pop user dffddf " +obj.gameId)
   if (room) {
-    console.log("pop user gameIdFind " +obj.gameId)
+   // console.log("pop user gameIdFind " +obj.gameId)
     io.to(room._id).emit("CHATCALLBACK", { chat: obj });
   }
 }
@@ -104,6 +104,7 @@ async function createRoom(obj, socket, io, cb) {
         if (!gameplay) {
           if (tempRoom._public == 1 && tempRoom.players_joined.length > 0) {
             makeAI(tempRoom, io);
+
             return;
           }
           io.to(tempRoom._id).emit("ROOMCANCEL", { status: 200, tempRoom });
@@ -154,12 +155,14 @@ async function makeAI(room, io) {
     let user = await User.findOne({
       $and: [{ game_id: null }, { role: "ai" }, { room_id: null }],
     });
+    
     if (!user) {
       user = await createAiUser();
     }
     if (!Array.isArray(room.players_joined)) {
       room.players_joined = [];
     }
+   
     user.room_id = room._id;
     room.players_joined.push(user);
     user.save();
@@ -209,11 +212,16 @@ async function makeAI(room, io) {
       gameplay.users_data = [];
     }
     gameplay.round = 1;
+    let aiUser =0;
     for (let i = 0; i < room.players_joined.length; i++) {
 
       gameplay.users_data.push(room.players_joined[i]);
       let user =  await  User.findById(room.players_joined[i]._id);
       user.game_id = gameplay.game_id ;
+      if(user.role=="ai")
+      {
+        aiUser =user._id;
+      }
       user.matches = user.matches+1;
        user.save();
    
@@ -245,7 +253,27 @@ async function makeAI(room, io) {
         gameplay.save();
         io.to(room._id).emit("STARTGAME", { status: 200, gameplay: gameplay });
       
-       
+        console.log("ai calls " + aiUser);
+           if(aiUser!=0)
+           {
+             let last =0;
+          for(let i=1;i<=10;i++)
+            {
+             let t = last +  (Math.floor(Math.random() * (20 - 1 + 1) + 10)) *1000;
+             last =t;
+             console.log("ai calls 2" + last);
+             console.log("ai calls 2" + t);
+            setTimeout(async () => {
+              let data = {
+              id :aiUser,
+              taskId : i,
+              game_id : gameplay.game_id
+              }
+              await gameplayService.taskDone(io,data);
+
+            }, t);
+          }
+        }
       
       } else {
       }
@@ -429,10 +457,12 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         if (!Array.isArray(gameplay.users_data)) {
           gameplay.users_data = [];
         }
+      
         for (let i = 0; i < room.players_joined.length; i++) {
           gameplay.users_data.push(room.players_joined[i]);
           let user = await  User.findById(room.players_joined[i]._id);
           user.game_id = gameplay.game_id ;
+          
           user.matches = user.matches+1;
            user.save();
        
@@ -442,7 +472,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
             tasksData.taskDone = [];
           }
           tasksData.id =room.players_joined[i]._id;
-          gameplay.tasksDone.push(tasksData);
+          await gameplay.tasksDone.push(tasksData);
         }
         gameplay.save();
         setTimeout(async () => {
@@ -462,13 +492,14 @@ async function lookForPublicRoom(obj, socket, io, cb) {
              
             } 
             gameplay.markModified("tasks");
-            gameplay.save();
+            await  gameplay.save();
+            console.log("ai startGame  calls " + aiUser);
             io.to(room._id).emit("STARTGAME", {
               status: 200,
               gameplay: gameplay,
             });
-            await gameplay.save();
-         
+          //   gameplay.save();
+           
           } else {
           }
         }, 3000);
@@ -491,6 +522,23 @@ async function checkGame(obj, socket, io, cb) {
       }
     }
   }
+}
+
+async function  playGameMission(id,obj,socket,cb)
+{
+  setTimeout(async () => {
+    missionDone(obj.id,12, obj, socket, cb);
+    setTimeout(async () => { 
+     missionDone(obj.id,13, obj, socket, cb);
+     setTimeout(async () => { 
+       missionDone(obj.id,14, obj, socket, cb);
+     
+      setTimeout(async () => { 
+       missionDone(obj.id,15, obj, socket, cb);
+     },  600); 
+      },  600); 
+    },  600); 
+   },  600); 
 }
 
 async function joinRoom(obj, socket, io, cb) {
