@@ -15,52 +15,7 @@ const Verification = require("../models/verification.modal");
 //var jwt = require('jsonwebtoken');
 //var bcrypt = require('bcryptjs');
 //var config = require('../config');
-module.exports = {
-  construct,
- 
-};
-async function construct(io, obj, socket, cb) {
-  console.log("collision calls " + obj.id);
-  let user = await User.findById(obj.id);
-  if (user) {
-    if (!Array.isArray( user.timers)) {
-      user.timers = [];
-    }
-    let data = {
-      type:1,
-      plot_id: obj.plot_id,
-      restaurant_id:obj.restaurant_id,
-      level:1,
-      timer:10,
-      endTime: Date.now
-    };
-    user.timers.push(data);
-       
-    user.markModified("timers");
-    await  user.save();
-    cb({
-      status: 200,    
-      message: data,
-    });
-    socket.emit("UPDATEDUSER", { status: 200, message:user });
-    setTimeout(async () => {
-      user.timers.pop(data);
-      let data2 = {      
-        plot_id: obj.plot_id,
-        restaurant_id:obj.restaurant_id,
-        level:1,
-      };
-      if (!Array.isArray( user.restaurants)) {
-        user.restaurants = [];
-      }
-      user.restaurants.push(data2);
-      user.markModified("restaurants");
-     await user.save()
-      socket.emit("CONSTRUCTFINISH", { status: 200, message: data2 });
-      socket.emit("UPDATEDUSER", { status: 200, message:user });
-    }, 10);  
-  }
-}
+
 
 
 router.post("/users/register", async (req, res) => {
@@ -185,12 +140,12 @@ router.post("/users/screen", async (req, res) => {
 router.post("/users/watchads", async (req, res) => {
   try {
     let user = await User.findById(req.body.id);
-    user.coins = user.coins + user.level * 100;
+    user.coins = user.coins + 100;
     console.log("user " + user.coins);
     user.save();
     res.send({ status: 200, message: user });
   } catch (e) {
-    res.status(400).send({ status: 400, message: e.message });
+    io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
   }
 });
 

@@ -612,24 +612,43 @@ async function joinRoom(obj, socket, io, cb) {
   }
 }
 async function resetCoins(room) {
-  // for (let i = 0; i < room.players_joined.length; i++) {
-  //   User.findByIdAndUpdate(
-  //     room.players_joined[i]._id,
-  //     {
-  //       $set: {
-  //         coins: room.players_joined[i].coins - room.players_joined[i].bet,
-  //       },
-  //     },
-  //     { new: true },
-  //     function (err, doc) {
-  //       if (err) {
-  //         throw err;
-  //       } else {
-  //         console.log("Updated User");
-  //       }
-  //     }
-  //   );
-  // }
+  for (let i = 0; i < room.players_joined.length; i++) {
+    User.findByIdAndUpdate(
+      room.players_joined[i]._id,
+      {
+        $set: {
+          coins: room.players_joined[i].coins - room.players_joined[i].bet,
+        },
+      },
+      { new: true },
+      function (err, doc) {
+        if (err) {
+          throw err;
+        } else {
+          console.log("Updated User");
+        }
+      }
+    );
+  }
 }
 
-async function resetCoinsByAds(obj, cb) {}
+async function resetCoinsByAds(obj, cb) {
+
+  User.findByIdAndUpdate(
+    obj._id,
+    {
+      $set: {
+        coins: room.players_joined[i].coins - room.players_joined[i].bet,
+      },
+    },
+    { new: true },
+    function (err, doc) {
+      if (err) {
+        throw err;
+      } else {
+        
+        console.log("Updated User");
+      }
+    }
+  );
+}

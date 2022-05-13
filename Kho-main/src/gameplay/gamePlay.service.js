@@ -8,7 +8,7 @@ const PlayerPegs = db.PlayerPegs;
 const User = db.User;
 const Round = db.Round;
 const Room = db.Room;
-
+const UserPacks = db.UserPacks;
 module.exports = {
   quitGame,
   endGame,
@@ -29,8 +29,10 @@ async function taskDone(io, obj) {
        io.to(obj.game_id).emit("TASKRECEIVED", { status: 200, message: obj });
        if(game.tasksDone[i].taskDone.length>=10)
        {
+         
           game.winnerId = obj.id;
         io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
+        
         endGame(obj.game_id,io);
        }
        game.markModified("tasksDone");
@@ -90,7 +92,31 @@ async function swap(io, obj, socket, cb) {
   }
 }
 
+async function missionDone(_id,missionId, obj, socket, cb) {
+  let user = await UserPacks.findOne({ id: _id });
+  let id = missionId;
+  let missions = [];
 
+  for (let i = 0; i < user.missions.length; i++) {
+    if (user.missions[i].id == id) {
+      user.missions[i].complete += 1;
+      user.markModified("missions");
+      if (user.missions[i].complete == user.missions[i].value) {
+        let u = await User.findById(obj.id);
+        u.coins = u.coins + user.missions[i].win;
+        missions.push(user.missions[i]);
+        u.save();
+      }
+      break;
+    }
+  }
+  if (missions.length > 0) {
+    socket.emit("MISSIONCOMPLETE", {
+      missionDone: missions,
+    });
+  }
+  user.save();
+}
 async function construct(io, obj, socket, cb) {
   console.log("construct calls " + obj.id);
   let user = await User.findById(obj.id);
@@ -130,8 +156,24 @@ async function construct(io, obj, socket, cb) {
       user.restaurants.push(data2);
       user.markModified("restaurants");
      await user.save()
+  
+
      io.to(user._id).emit("CONSTRUCTFINISH", { status: 200, message: data2 });
      io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
+
+     
+     missionDone(obj.id,3, obj, socket, cb);
+     setTimeout(async () => {
+     missionDone(obj.id,4, obj, socket, cb);
+     setTimeout(async () => { 
+      missionDone(obj.id,5, obj, socket, cb);
+      setTimeout(async () => { 
+        missionDone(obj.id,6, obj, socket, cb);
+       },  600); 
+     },  600); 
+    },  600); 
+   
+    
     },  t);  
   }
 }
@@ -166,12 +208,15 @@ async function upgrade(io, obj, socket, cb) {
     setTimeout(async () => {
       user.timers.pop(data);
 
+      let l = 0;
       for(let j=0;j<user.restaurants.length;j++)
       {
-        if(obj.plot_id == user.restaurants.plot_id)
+        if(obj.plot_id == user.restaurants[j].plot_id)
         {
-          user.restaurants.level= obj.level+1;
-        
+          l = user.restaurants[j].level;
+          user.restaurants[j].level= l+1;
+          user.markModified("restaurants");
+          await user.save()
           break;
         }
 
@@ -179,16 +224,28 @@ async function upgrade(io, obj, socket, cb) {
       let data2 = {      
         plot_id: obj.plot_id,
         restaurant_id:obj.restaurant_id,
-        level:obj.level+1,
+        level:l+1
       };
       //if (!Array.isArray( user.restaurants)) {
      //   user.restaurants = [];
     //  }
     //  user.restaurants.push(data2);
-      user.markModified("restaurants");
-     await user.save()
+   
      io.to(user._id).emit("UPGRADEFINISH", { status: 200, message: data2 });
      io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
+     missionDone(obj.id,7, obj, socket, cb);
+     setTimeout(async () => {
+     missionDone(obj.id,12, obj, socket, cb);
+     setTimeout(async () => { 
+      missionDone(obj.id,13, obj, socket, cb);
+      setTimeout(async () => { 
+        missionDone(obj.id,14, obj, socket, cb);
+       },  600); 
+       setTimeout(async () => { 
+        missionDone(obj.id,15, obj, socket, cb);
+       },  600); 
+     },  600); 
+    },  600); 
     }, t);  
   }
 }
@@ -308,6 +365,10 @@ async function endGame(gameId, io) {
   //  }
   for (let i = 0; i < gamePlay.users_data.length; i++) {
     let user = await User.findById(gamePlay.users_data[i]._id);
+  if(  gamePlay.winnerId==gamePlay.users_data[i]._id)
+  {
+    user.wins=user.wins+1;
+  }
     user.game_id = null;
     user.room_id = null;
     user.save();
