@@ -240,9 +240,10 @@ async function upgrade(io, obj, socket, cb) {
       missionDone(obj.id,13, obj, socket, cb);
       setTimeout(async () => { 
         missionDone(obj.id,14, obj, socket, cb);
-       },  600); 
+      
        setTimeout(async () => { 
         missionDone(obj.id,15, obj, socket, cb);
+      },  600); 
        },  600); 
      },  600); 
     },  600); 

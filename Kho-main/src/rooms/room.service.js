@@ -72,6 +72,7 @@ async function createRoom(obj, socket, io, cb) {
     room.status = 0;
     room.name = obj.roomName;
     user.bet = obj.bet;
+    
     room._public = obj._public;
     room.code = Math.floor(Math.random() * 999999) + 100000;
     let time = obj.time;
@@ -226,7 +227,7 @@ async function makeAI(room, io) {
     gameplay.save();
     setTimeout(async () => {
       if (gameplay) {
-        await resetCoins(room);
+     //   await resetCoins(room);
         console.log("gameplay calls");
         if (!Array.isArray( gameplay.tasks)) {
           gameplay.tasks = [];
@@ -263,6 +264,7 @@ async function createAiUser() {
     ];
   user.is_online = 1;
   user.role = "ai";
+  user.coins= 1000;
   user.avatar = "kaiser/" + (Math.floor(Math.random() * 4) + 0).toString();
   user.token = "Guest" + new Date().toISOString();
   if (!Array.isArray( user.restaurants)) {
