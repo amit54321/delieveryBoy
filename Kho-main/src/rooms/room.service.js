@@ -614,7 +614,7 @@ async function joinRoom(obj, socket, io, cb) {
 
           setTimeout(async () => {
             if (gameplay) {
-              await resetCoins(room);
+         //     await resetCoins(room);
               console.log("gameplay calls");
               if (!Array.isArray( gameplay.tasks)) {
                 gameplay.tasks = [];

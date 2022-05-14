@@ -346,13 +346,19 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
     //   }
     // }
     // else
-
-    if (room.players_joined.length == 1) {
    
-          gameplay.winnerId = room.players_joined[0]._id;
+    if (room.players_joined.length == 1) {
+      for (let i = 0; i < gameplay.users_data.length; i++) {
+    
+        if(  userId!=gameplay.users_data[i]._id)
+        {
+          gameplay.winnerId =gameplay.users_data[i]._id;
+        }
+      }
+        //  gameplay.winnerId = room.players_joined[0]._id;
    
           
-      gameplay.save();
+      await gameplay.save();
       io.to(room._id).emit("GAMEEND", { status: 200, gameplay: gameplay });
       await endGame(gameId, io);
     }
