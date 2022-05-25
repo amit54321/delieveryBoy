@@ -103,7 +103,7 @@ async function createRoom(obj, socket, io, cb) {
         let gameplay = await GamePlay.findOne({ game_id: tempRoom._id });
         if (!gameplay) {
           if (tempRoom._public == 1 && tempRoom.players_joined.length > 0) {
-            makeAI(tempRoom, io);
+            makeAI(tempRoom, io,socket);
 
             return;
           }
@@ -148,7 +148,7 @@ async function createRoom(obj, socket, io, cb) {
     });
   }
 }
-async function makeAI(room, io) {
+async function makeAI(room, io,socket) {
   let playersRequired = room.no_of_players - room.players_joined.length;
   console.log("Players  " + playersRequired);
   for (let i = 0; i < playersRequired; i++) {
@@ -252,7 +252,10 @@ async function makeAI(room, io) {
         gameplay.markModified("tasks");
         gameplay.save();
         io.to(room._id).emit("STARTGAME", { status: 200, gameplay: gameplay });
-      
+        for (let i = 0; i < room.players_joined.length; i++) {
+
+          playGameMission(room.players_joined[i]._id,socket);
+        }
         console.log("ai calls " + aiUser);
            if(aiUser!=0)
            {
@@ -293,7 +296,7 @@ async function createAiUser() {
   user.is_online = 1;
   user.role = "ai";
   user.coins= 1000;
-  user.avatar = "kaiser/" + (Math.floor(Math.random() * 4) + 0).toString();
+  user.avatar =  (Math.floor(Math.random() * 4) + 0).toString();
   user.token = "Guest" + new Date().toISOString();
   if (!Array.isArray( user.restaurants)) {
     user.restaurants = [];
@@ -499,7 +502,11 @@ async function lookForPublicRoom(obj, socket, io, cb) {
               gameplay: gameplay,
             });
           //   gameplay.save();
-           
+          for (let i = 0; i < room.players_joined.length; i++) {
+            playGameMission(room.players_joined[i]._id,socket);
+          
+          
+          }
           } else {
           }
         }, 3000);
@@ -524,18 +531,19 @@ async function checkGame(obj, socket, io, cb) {
   }
 }
 
-async function  playGameMission(id,obj,socket,cb)
+async function  playGameMission(id,socket)
 {
+  let obj = {      
+    
+  };
   setTimeout(async () => {
-    missionDone(obj.id,12, obj, socket, cb);
+    gameplayService.missionDone(id,0, obj, socket);
     setTimeout(async () => { 
-     missionDone(obj.id,13, obj, socket, cb);
+      gameplayService. missionDone(id,1, obj, socket);
      setTimeout(async () => { 
-       missionDone(obj.id,14, obj, socket, cb);
+      gameplayService.missionDone(id,2, obj, socket);
      
-      setTimeout(async () => { 
-       missionDone(obj.id,15, obj, socket, cb);
-     },  600); 
+      
       },  600); 
     },  600); 
    },  600); 
@@ -635,6 +643,14 @@ async function joinRoom(obj, socket, io, cb) {
                 gameplay: gameplay,
               });
          
+              for (let i = 0; i < room.players_joined.length; i++) {
+
+                playGameMission(room.players_joined[i]._id,socket);
+              
+            }
+
+
+
             } else {
             }
           }, 2000);

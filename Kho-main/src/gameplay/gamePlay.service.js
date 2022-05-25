@@ -16,6 +16,7 @@ module.exports = {
   upgrade,
   taskDone,
   swap,
+  missionDone
 };
 
 async function taskDone(io, obj) {
@@ -92,11 +93,13 @@ async function swap(io, obj, socket, cb) {
   }
 }
 
-async function missionDone(_id,missionId, obj, socket, cb) {
+async function missionDone(_id,missionId, obj, socket) {
   let user = await UserPacks.findOne({ id: _id });
   let id = missionId;
   let missions = [];
 
+  if(user && user.missions)
+  {
   for (let i = 0; i < user.missions.length; i++) {
     if (user.missions[i].id == id) {
       user.missions[i].complete += 1;
@@ -109,6 +112,7 @@ async function missionDone(_id,missionId, obj, socket, cb) {
       }
       break;
     }
+  
   }
   if (missions.length > 0) {
     socket.emit("MISSIONCOMPLETE", {
@@ -116,6 +120,7 @@ async function missionDone(_id,missionId, obj, socket, cb) {
     });
   }
   user.save();
+}
 }
 async function construct(io, obj, socket, cb) {
   console.log("construct calls " + obj.id);
@@ -162,13 +167,13 @@ async function construct(io, obj, socket, cb) {
      io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
 
      
-     missionDone(obj.id,3, obj, socket, cb);
+     missionDone(obj.id,3, obj, socket);
      setTimeout(async () => {
-     missionDone(obj.id,4, obj, socket, cb);
+     missionDone(obj.id,4, obj, socket);
      setTimeout(async () => { 
-      missionDone(obj.id,5, obj, socket, cb);
+      missionDone(obj.id,5, obj, socket);
       setTimeout(async () => { 
-        missionDone(obj.id,6, obj, socket, cb);
+        missionDone(obj.id,6, obj, socket);
        },  600); 
      },  600); 
     },  600); 
@@ -233,16 +238,16 @@ async function upgrade(io, obj, socket, cb) {
    
      io.to(user._id).emit("UPGRADEFINISH", { status: 200, message: data2 });
      io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
-     missionDone(obj.id,7, obj, socket, cb);
+     missionDone(obj.id,7, obj, socket);
      setTimeout(async () => {
-     missionDone(obj.id,12, obj, socket, cb);
+     missionDone(obj.id,12, obj, socket);
      setTimeout(async () => { 
-      missionDone(obj.id,13, obj, socket, cb);
+      missionDone(obj.id,13, obj, socket);
       setTimeout(async () => { 
-        missionDone(obj.id,14, obj, socket, cb);
+        missionDone(obj.id,14, obj, socket);
       
        setTimeout(async () => { 
-        missionDone(obj.id,15, obj, socket, cb);
+        missionDone(obj.id,15, obj, socket);
       },  600); 
        },  600); 
      },  600); 
