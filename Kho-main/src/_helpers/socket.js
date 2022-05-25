@@ -161,9 +161,22 @@ module.exports = function (io) {
       await userPacks.showDailyReward(socket, obj);
     });
 
+    async function playerOffline( socket) {
+      console.log({ socket });
+      let user = await User.findOne({socket_id: socket});
+      console.log({ user });
+      if(user)
+      {
+      user.socket_id ="";
+      user.is_online=0;
+      await user.save();
+      }
+    }
+
     socket.on("disconnect", function () {
-      console.log(" has disconnected from the chat." + socket.id);
-      console.log({ all_users });
+     // console.log(" has disconnected from the chat." + socket.id);
+     
+       playerOffline(socket.id);
       //  userService.setOfflineUsers(socket, all_users);
       delete all_users[socket.id];
       console.log(all_users);

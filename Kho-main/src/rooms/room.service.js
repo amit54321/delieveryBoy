@@ -19,6 +19,7 @@ module.exports = {
   chat,
   setCoin,
   resetCoinsByAds,
+  resetCoinsById
 };
 
 async function chat(obj, socket, io, cb) {
@@ -71,8 +72,8 @@ async function createRoom(obj, socket, io, cb) {
     room.no_of_players = obj.numberOfPlayers;
     room.status = 0;
     room.name = obj.roomName;
-    user.bet = obj.bet;
-    
+   // user.bet = obj.bet;
+    room.bet = obj.bet;
     room._public = obj._public;
     room.code = Math.floor(Math.random() * 999999) + 100000;
     let time = obj.time;
@@ -235,7 +236,7 @@ async function makeAI(room, io,socket) {
     gameplay.save();
     setTimeout(async () => {
       if (gameplay) {
-     //   await resetCoins(room);
+        await resetCoins(room);
         console.log("gameplay calls");
         if (!Array.isArray( gameplay.tasks)) {
           gameplay.tasks = [];
@@ -409,7 +410,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
 
       room.players_joined.push(user);
       user.room_id = room._id;
-      user.bet = obj.bet;
+    //  user.bet = obj.bet;
       mongoose.set("useFindAndModify", false);
       Room.findByIdAndUpdate(
         room._id,
@@ -561,7 +562,7 @@ async function joinRoom(obj, socket, io, cb) {
         room.players_joined.push(user);
         room = await room.save();
         user.room_id = room._id;
-        user.bet = obj.bet;
+      //  user.bet = obj.bet;
         user.save();
         let timeLeft = room.end_time - Date.now();
         io.to(room._id).emit("ONROOMJOINED", {
@@ -622,7 +623,7 @@ async function joinRoom(obj, socket, io, cb) {
 
           setTimeout(async () => {
             if (gameplay) {
-         //     await resetCoins(room);
+              await resetCoins(room);
               console.log("gameplay calls");
               if (!Array.isArray( gameplay.tasks)) {
                 gameplay.tasks = [];
@@ -683,7 +684,7 @@ async function resetCoins(room) {
       room.players_joined[i]._id,
       {
         $set: {
-          coins: room.players_joined[i].coins - room.players_joined[i].bet,
+          coins: room.players_joined[i].coins - room.bet,
         },
       },
       { new: true },
@@ -696,6 +697,26 @@ async function resetCoins(room) {
       }
     );
   }
+}
+async function resetCoinsById(id,coin) {
+  
+    User.findByIdAndUpdate(
+     id,
+      {
+       
+          $inc : { "coins" : coin } ,
+        
+      },
+      { new: true },
+      function (err, doc) {
+        if (err) {
+          throw err;
+        } else {
+          console.log("Updated User");
+        }
+      }
+    );
+  
 }
 
 async function resetCoinsByAds(obj, cb) {

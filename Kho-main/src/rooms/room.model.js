@@ -36,7 +36,11 @@ const schema = mongoose.Schema({
         type: Number,
         default: Date.now
     }
-
+, 
+     bet: {
+    type: Number,
+    default: 0
+    }
 
 
 });

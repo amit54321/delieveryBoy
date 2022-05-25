@@ -9,6 +9,8 @@ const User = db.User;
 const Round = db.Round;
 const Room = db.Room;
 const UserPacks = db.UserPacks;
+const room = require("../rooms/room.service");
+
 module.exports = {
   quitGame,
   endGame,
@@ -18,7 +20,26 @@ module.exports = {
   swap,
   missionDone
 };
+async function resetCoinsById(id,coin) {
+  
+  User.findByIdAndUpdate(
+   id,
+    {
+     
+        $inc : { "coins" : coin } ,
+      
+    },
+    { new: true },
+    function (err, doc) {
+      if (err) {
+        throw err;
+      } else {
+        console.log("Updated User");
+      }
+    }
+  );
 
+}
 async function taskDone(io, obj) {
   let game = await GamePlay.findOne({ game_id: obj.game_id });
   if (game) {
@@ -32,6 +53,8 @@ async function taskDone(io, obj) {
        {
          
           game.winnerId = obj.id;
+         // resetCoinsById( obj.id,500);
+          user.coins= user.coins+500;
         io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
         
         endGame(obj.game_id,io);
@@ -158,6 +181,8 @@ async function construct(io, obj, socket, cb) {
       if (!Array.isArray( user.restaurants)) {
         user.restaurants = [];
       }
+    //  resetCoinsById( obj.id,-obj.cost);
+      user.coins= user.coins-obj.cost;
       user.restaurants.push(data2);
       user.markModified("restaurants");
      await user.save()
@@ -224,13 +249,16 @@ async function upgrade(io, obj, socket, cb) {
         }
 
       }
+      user.coins= user.coins-obj.cost;
       user.markModified("restaurants");
       await user.save()
       let data2 = {      
         plot_id: obj.plot_id,
         restaurant_id:obj.restaurant_id,
         level:l+1
-      };
+      }; 
+    
+    //  resetCoinsById( obj.id,-obj.cost);
       //if (!Array.isArray( user.restaurants)) {
      //   user.restaurants = [];
     //  }
