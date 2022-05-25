@@ -53,8 +53,8 @@ async function taskDone(io, obj) {
        {
          
           game.winnerId = obj.id;
-         // resetCoinsById( obj.id,500);
-          user.coins= user.coins+500;
+          resetCoinsById( obj.id,500);
+        //  user.coins= user.coins+500;
         io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
         
         endGame(obj.game_id,io);
