@@ -71,8 +71,16 @@ timers: {
   default: []
 },
 
-
- 
+tutorial: {
+  type: Number,
+  required: false,
+  default: 0,
+},
+step: {
+  type: Number,
+  required: false,
+  default: 0,
+},
   matches: {
     type: Number,
     required: false,

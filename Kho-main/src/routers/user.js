@@ -117,6 +117,18 @@ router.post("/users/login", async (req, res) => {
     res.status(400).send({ status: 400, error: e.message });
   }
 });
+
+router.post("/users/tutorialStep", async (req, res) => {
+  try {
+    let user = await User.findById(req.body.id);
+    user.tutorial =1;
+    await user.save();
+    res.send({ status: 200, message: user });
+  } catch (e) {
+    res.status(400).send({ status: 400, message: e.message });
+  }
+});
+
 router.post("/users/data", async (req, res) => {
   try {
     let user = await User.findById(req.body.id);
@@ -205,6 +217,19 @@ router.post("/forgot/new/password", async (req, res) => {
   } catch (e) {
     res.status(400).send({ status: 400, message: e.message });
   }
+});
+router.post("/users/addcoins", async (req, res) => {
+  let user = await User.findById(req.body.id);
+    user.coins = user.coins + req.body.coins;
+    
+    await user.save();
+    console.log("user " + user.coins);
+  
+    res.send({
+      status: 200,
+      message: user,
+    });
+  
 });
 
 router.post("/users/dailyreward", async (req, res) => {
