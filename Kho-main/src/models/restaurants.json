@@ -1,0 +1,623 @@
+{
+  "version":1,
+  "data": [
+    {
+      "id": 1,
+      "title": "pizza",
+      "desc": "make italian pizzas",
+      "levels": [
+        {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }
+        
+      ]
+    },
+
+
+     {
+      "id": 2,
+      "title": "burger",
+      "desc": "make states burger",
+      "levels": [
+       {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }
+      ]
+     },
+         {
+      "id": 3,
+      "title": "fries",
+      "desc": "make french burger",
+      "levels": [
+       {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }
+      ]
+         },
+         {
+      "id": 4,
+      "title": "ice-cream",
+      "desc": "make new zeleand ice-cream",
+      "levels": [
+        {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }]
+         },
+         {
+      "id": 5,
+      "title": "soda",
+      "desc": "make mexican soda",
+      "levels": [
+       {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }
+      ]
+         },
+         {
+      "id": 6,
+      "title": "burger6",
+      "desc": "make states burger",
+      "levels": [
+        {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }]},
+         {
+      "id": 7,
+      "title": "burger7",
+      "desc": "make states burger",
+      "levels": [
+       {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }]},
+         {
+      "id": 8,
+      "title": "burger8",
+      "desc": "make states burger",
+      "levels": [
+       {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }]},
+         {
+      "id": 9,
+      "title": "burger9",
+      "desc": "make states burger",
+      "levels": [
+        {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }]},
+         {
+      "id": 10,
+      "title": "burger10",
+      "desc": "make states burger",
+      "levels": [
+        {
+          "cookTime":12,
+          "quantity":1,
+          "cost": 100,
+          "timer": 10
+        },
+        {
+          "cookTime":10,
+          "quantity":1,
+          "cost": 200,
+          "timer": 50
+        },
+        {
+          "cookTime":8,
+          "quantity":1,
+          "cost": 500,
+          "timer": 100
+        },
+          {
+          "cookTime":6,
+          "quantity":1,
+          "cost": 1000,
+          "timer": 200
+        },
+        {
+          "cookTime":5,
+          "quantity":1,
+          "cost": 2000,
+          "timer": 500
+        },
+        {
+          "cookTime":4,
+          "quantity":1,
+          "cost": 5000,
+          "timer": 2000
+        },
+
+          {
+          "cookTime":3,
+          "quantity":1,
+          "cost": 10000,
+          "timer": 5000
+        },
+        {
+          "cookTime":2,
+          "quantity":1,
+          "cost": 20000,
+          "timer": 10000
+        },
+        {
+          "cookTime":1,
+          "quantity":1,
+          "cost": 50000,
+          "timer": 50000
+        }
+        
+      ]
+    }
+
+
+
+  ]
+         }
