@@ -18,7 +18,8 @@ module.exports = {
   upgrade,
   taskDone,
   swap,
-  missionDone
+  missionDone,
+  missionDoneMany
 };
 async function resetCoinsById(id,coin) {
   
@@ -116,6 +117,41 @@ async function swap(io, obj, socket, cb) {
   }
 }
 
+async function missionDoneMany(_id,missionId, obj, socket) {
+  let user = await UserPacks.findOne({ id: _id });
+  
+  let missions = [];
+
+  if(user && user.missions)
+  {
+  for (let i = 0; i < user.missions.length; i++) {
+    for (let j = 0; j < missionId.length; j++) {
+      let id = missionId[j];
+      console.log("construct calls " +missionId[j] +  "   "+user.missions[i].id+"    "+id)
+    if (user.missions[i].id == id) {
+      user.missions[i].complete += 1;
+      user.markModified("missions");
+      if (user.missions[i].complete == user.missions[i].value) {
+        let u = await User.findById(obj.id);
+        u.coins = u.coins + user.missions[i].win;
+        missions.push(user.missions[i]);
+        await u.save();
+      
+      }
+    
+    }
+  }
+  }
+ ;
+  if (missions.length > 0) {
+    socket.emit("MISSIONCOMPLETE", {
+      missionDone: missions,
+    });
+  }
+  user.save();
+  }
+}
+
 async function missionDone(_id,missionId, obj, socket) {
   let user = await UserPacks.findOne({ id: _id });
   let id = missionId;
@@ -131,7 +167,7 @@ async function missionDone(_id,missionId, obj, socket) {
         let u = await User.findById(obj.id);
         u.coins = u.coins + user.missions[i].win;
         missions.push(user.missions[i]);
-        u.save();
+        await u.save();
       }
       break;
     }
@@ -142,7 +178,7 @@ async function missionDone(_id,missionId, obj, socket) {
       missionDone: missions,
     });
   }
-  user.save();
+  await user.save();
 }
 }
 async function construct(io, obj, socket, cb) {
@@ -191,8 +227,13 @@ async function construct(io, obj, socket, cb) {
      io.to(user._id).emit("CONSTRUCTFINISH", { status: 200, message: data2 });
      io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
 
-     
-     missionDone(obj.id,3, obj, socket);
+     let m= [];
+     m.push(3);
+     m.push(4);
+     m.push(5);
+     m.push(6);
+     missionDoneMany(obj.id,m,obj,socket)
+    /*  missionDone(obj.id,3, obj, socket);
      setTimeout(async () => {
      missionDone(obj.id,4, obj, socket);
      setTimeout(async () => { 
@@ -201,7 +242,7 @@ async function construct(io, obj, socket, cb) {
         missionDone(obj.id,6, obj, socket);
        },  600); 
      },  600); 
-    },  600); 
+    },  600);  */
    
     
     },  t);  
@@ -266,6 +307,15 @@ async function upgrade(io, obj, socket, cb) {
    
      io.to(user._id).emit("UPGRADEFINISH", { status: 200, message: data2 });
      io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
+
+     let m= [];
+     m.push(7);
+     m.push(12);
+     m.push(13);
+     m.push(14);
+     m.push(15);
+     missionDoneMany(obj.id,m,obj,socket)
+/* 
      missionDone(obj.id,7, obj, socket);
      setTimeout(async () => {
      missionDone(obj.id,12, obj, socket);
@@ -279,7 +329,7 @@ async function upgrade(io, obj, socket, cb) {
       },  600); 
        },  600); 
      },  600); 
-    },  600); 
+    },  600);  */
     }, t);  
   }
 }

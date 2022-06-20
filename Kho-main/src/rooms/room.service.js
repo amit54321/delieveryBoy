@@ -76,6 +76,12 @@ async function createRoom(obj, socket, io, cb) {
     room.bet = obj.bet;
     room._public = obj._public;
     room.code = Math.floor(Math.random() * 999999) + 100000;
+    let r = await Room.findOne({code : room.code});
+    while(r!=null)
+    {
+      room.code = Math.floor(Math.random() * 999999) + 100000;
+       r = await Room.findOne({code : room.code});
+    }
     let time = obj.time;
     if (!time) {
       time = 1800000;

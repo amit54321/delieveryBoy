@@ -151,7 +151,10 @@ module.exports = function (io) {
       console.log({ obj });
       await userPacks.missionDone(socket, io, obj, cb);
     });
-
+    socket.on("MISSIONDONEMANY", async (obj, cb) => {
+      console.log({ obj });
+      await userPacks.missionDoneMany(socket, io, obj, cb);
+    });
     socket.on("ADDCHATPACK", async (obj, cb) => {
       console.log({ obj });
       await userPacks.addChats(socket, io, obj, cb);

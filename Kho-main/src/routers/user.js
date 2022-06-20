@@ -123,7 +123,8 @@ router.post("/users/tutorialStep", async (req, res) => {
     let user = await User.findById(req.body.id);
     user.tutorial =1;
     await user.save();
-    res.send({ status: 200, message: user });
+    console.log("TUTORIAL FINISHED");
+    res.status(200).send({ status: 200, message: user });
   } catch (e) {
     res.status(400).send({ status: 400, message: e.message });
   }
