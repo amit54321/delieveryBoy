@@ -21,43 +21,42 @@ module.exports = function (io) {
   let all_users = {};
   io.on("connection", async function (socket) {
     //console.log(
-   //   "Connected On Network" + socket.id + "   " + socket.handshake.query.token
-   // );
+    //   "Connected On Network" + socket.id + "   " + socket.handshake.query.token
+    // );
     let secret = "amitscreatingthisprojectToManuplulate";
     let isRevoked = socket.handshake.query.token;
-  
-   
+
+
     try {
-     // const decoded = jwt.verify(isRevoked.trim(), secret);
-    //  all_users[socket.id] = decoded.sub;
+      // const decoded = jwt.verify(isRevoked.trim(), secret);
+      //  all_users[socket.id] = decoded.sub;
       console.log(
-        " On Network" + socket.id + "   " +isRevoked
+        " On Network" + socket.id + "   " + isRevoked
       );
       let user = await User.findById(isRevoked);
       user.socket_id = socket.id;
-      user.is_online=1;
+      user.is_online = 1;
       await user.save();
-      socket.emit("UPDATEDUSER", { status: 200, message:user });
-    
-     
+      socket.emit("UPDATEDUSER", { status: 200, message: user });
+
+
       socket.join(isRevoked);
-   
+
       if (user.game_id != null) {
-    
+
         let gameplay = await GamePlay.findOne({ game_id: user.game_id });
-        if(gameplay )
-        {
+        if (gameplay) {
           socket.join(user.room_id._id);
-          socket .emit("STARTGAME", {
-          status: 200,
-          gameplay: gameplay,
-        });
+          socket.emit("STARTGAME", {
+            status: 200,
+            gameplay: gameplay,
+          });
         }
       }
 
 
 
-      console.log(  " USER " +user);
+      console.log(" USER " + user);
     } catch (err) {
       console.log("errrr " + err);
 
@@ -72,7 +71,7 @@ module.exports = function (io) {
     });
     socket.on("TASKDONE", async (obj, cb) => {
       console.log({ obj });
-      await gamePlay.taskDone( io, obj);
+      await gamePlay.taskDone(io, obj);
     });
 
     socket.on("CHECKROOM", async (obj, cb) => {
@@ -114,28 +113,28 @@ module.exports = function (io) {
       console.log({ obj });
       await gamePlay.addPlayerPegs(obj, cb)
     }); */
-    
-  
+
+
 
     socket.on("CONSTRUCT", async (obj, cb) => {
       console.log({ obj });
-      await gamePlay.construct(io, obj, socket,cb);
+      await gamePlay.construct(io, obj, socket, cb);
     });
 
     socket.on("SWAP", async (obj, cb) => {
       console.log({ obj });
-      await gamePlay.swap(io, obj, socket,cb);
+      await gamePlay.swap(io, obj, socket, cb);
     });
     socket.on("UPGRADE", async (obj, cb) => {
       console.log({ obj });
-      await gamePlay.upgrade(io, obj, socket,cb);
+      await gamePlay.upgrade(io, obj, socket, cb);
     });
     socket.on("QUITGAME", async (obj, cb) => {
       console.log({ obj });
       await gamePlay.quitGame(obj, socket, io);
     });
 
-    
+
 
     socket.on("GETALLCHATS", async (obj, cb) => {
       console.log({ obj });
@@ -163,23 +162,34 @@ module.exports = function (io) {
       console.log({ obj });
       await userPacks.showDailyReward(socket, obj);
     });
-
-    async function playerOffline( socket) {
+    socket.on("USETIMERPACK", async (obj, cb) => {
+      console.log({ obj });
+      await gamePlay.useTimerPack(obj, cb);
+    });
+    socket.on("ADDTIMERPACK", async (obj, cb) => {
+      console.log({ obj });
+      await gamePlay.addTimerPack(obj, cb);
+    });
+    socket.on("CANCELTIMER", async (obj, cb) => {
+      console.log({ obj });
+      await gamePlay.cancelTimer(io, obj, socket, cb);
+    });
+    
+    async function playerOffline(socket) {
       console.log({ socket });
-      let user = await User.findOne({socket_id: socket});
+      let user = await User.findOne({ socket_id: socket });
       console.log({ user });
-      if(user)
-      {
-      user.socket_id ="";
-      user.is_online=0;
-      await user.save();
+      if (user) {
+        user.socket_id = "";
+        user.is_online = 0;
+        await user.save();
       }
     }
 
     socket.on("disconnect", function () {
-     // console.log(" has disconnected from the chat." + socket.id);
-     
-       playerOffline(socket.id);
+      // console.log(" has disconnected from the chat." + socket.id);
+
+      playerOffline(socket.id);
       //  userService.setOfflineUsers(socket, all_users);
       delete all_users[socket.id];
       console.log(all_users);

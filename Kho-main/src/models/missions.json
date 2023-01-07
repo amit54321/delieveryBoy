@@ -12,7 +12,7 @@
       "id": 1,
       "type": "text",
       "text": "Play 50 games",
-      "win": 100,
+      "win": 500,
       "value": 50,
       "complete": 0
     },
@@ -20,7 +20,7 @@
       "id": 2,
       "type": "text",
       "text": "Play 100 games",
-      "win": 100,
+      "win": 1000,
       "value": 100,
       "complete": 0
     },
@@ -36,7 +36,7 @@
       "id": 4,
       "type": "text",
       "text": "Construct 3 restaurants",
-      "win": 300,
+      "win": 200,
       "value": 3,
       "complete": 0
     },
@@ -44,7 +44,7 @@
       "id": 5,
       "type": "text",
       "text": "Construct 5 restaurants",
-      "win": 100,
+      "win": 300,
       "value": 5,
       "complete": 0
     },
@@ -52,7 +52,7 @@
       "id": 6,
       "type": "text",
       "text": "Construct 10 restaurants",
-      "win": 100,
+      "win": 400,
       "value": 10,
       "complete": 0
     },
@@ -76,7 +76,7 @@
       "id": 9,
       "type": "text",
       "text": "Win 5 matches",
-      "win": 100,
+      "win": 200,
       "value": 5,
       "complete": 0
     },
@@ -84,7 +84,7 @@
       "id": 10,
       "type": "text",
       "text": "Win 10 matches",
-      "win": 100,
+      "win": 300,
       "value": 10,
       "complete": 0
     },
@@ -92,7 +92,7 @@
       "id": 11,
       "type": "text",
       "text": "Win 25 matches",
-      "win": 100,
+      "win": 500,
       "value": 25,
       "complete": 0
     },
@@ -100,7 +100,7 @@
       "id": 12,
       "type": "text",
       "text": "Upgrade 5 restaurant",
-      "win": 100,
+      "win": 200,
       "value": 5,
       "complete": 0
     },
@@ -108,7 +108,7 @@
       "id": 13,
       "type": "text",
       "text": "Upgrade 10 restaurant",
-      "win": 100,
+      "win": 300,
       "value": 10,
       "complete": 0
     },
@@ -116,7 +116,7 @@
       "id": 14,
       "type": "text",
       "text": "Upgrade 15 restaurant",
-      "win": 100,
+      "win": 400,
       "value": 15,
       "complete": 0
     },
@@ -124,7 +124,7 @@
       "id": 15,
       "type": "text",
       "text": "Upgrade 25 restaurant",
-      "win": 100,
+      "win": 500,
       "value":25,
       "complete": 0
     }

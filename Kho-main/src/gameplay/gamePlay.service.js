@@ -19,16 +19,19 @@ module.exports = {
   taskDone,
   swap,
   missionDone,
-  missionDoneMany
+  missionDoneMany,
+  useTimerPack,
+  addTimerPack,
+  cancelTimer
 };
-async function resetCoinsById(id,coin) {
-  
+async function resetCoinsById(id, coin) {
+
   User.findByIdAndUpdate(
-   id,
+    id,
     {
-     
-        $inc : { "coins" : coin } ,
-      
+
+      $inc: { "coins": coin },
+
     },
     { new: true },
     function (err, doc) {
@@ -45,28 +48,26 @@ async function taskDone(io, obj) {
   let game = await GamePlay.findOne({ game_id: obj.game_id });
   if (game) {
     for (let i = 0; i < game.tasksDone.length; i++) {
-     if(game.tasksDone[i].id==obj.id)
-     {
-       game.tasksDone[i].taskDone.push(obj.taskId);
-      
-       io.to(obj.game_id).emit("TASKRECEIVED", { status: 200, message: obj });
-       if(game.tasksDone[i].taskDone.length>=10)
-       {
-         
+      if (game.tasksDone[i].id == obj.id) {
+        game.tasksDone[i].taskDone.push(obj.taskId);
+
+        io.to(obj.game_id).emit("TASKRECEIVED", { status: 200, message: obj });
+
+        game.markModified("tasksDone");
+        await game.save();
+        if (game.tasksDone[i].taskDone.length >= 10) {
+
           game.winnerId = obj.id;
-          resetCoinsById( obj.id,500);
-        //  user.coins= user.coins+500;
-        io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
-        
-        endGame(obj.game_id,io);
-       }
-       game.markModified("tasksDone");
-      await game.save();
-      break;
-     }
-       
+          resetCoinsById(obj.id, 500);
+          io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
+          endGame(obj.game_id, io);
+          await game.save();
+        }
+        break;
+      }
+
     }
-    
+
   }
 }
 
@@ -75,262 +76,325 @@ async function swap(io, obj, socket, cb) {
   let user = await User.findById(obj.id);
   if (user) {
 
-   
-      if (!Array.isArray( user.restaurants)) {
-        user.restaurants = [];
+
+    if (!Array.isArray(user.restaurants)) {
+      user.restaurants = [];
+    }
+    let d1r, d2r, d1l, d2l;
+    let index1, index2;
+    for (let i = 0; i < user.restaurants.length; i++) {
+      if (user.restaurants[i].plot_id == obj.plot_id1) {
+        index1 = i;
+        d1r = user.restaurants[i].restaurant_id;
+        d1l = user.restaurants[i].level;
+        for (let j = 0; j < user.restaurants.length; j++) {
+          if (user.restaurants[j].plot_id == obj.plot_id2) {
+            index2 = j;
+            d2r = user.restaurants[j].restaurant_id;
+            d2l = user.restaurants[j].level;
+
+            i = user.restaurants.length;
+            break;
+          }
+        }
+
       }
-      let d1r ,d2r,d1l,d2l;
-      let index1,index2;
-      for(let i=0;i<user.restaurants.length;i++)
-      {
-        if(user.restaurants[i].plot_id==obj.plot_id1)
-        {
-          index1= i;
-           d1r = user.restaurants[i].restaurant_id;
-           d1l = user.restaurants[i].level;
-          for(let j=0;j<user.restaurants.length;j++)
-          {
-            if(user.restaurants[j].plot_id==obj.plot_id2)
-            {
-              index2= j;
-              d2r = user.restaurants[j].restaurant_id;
-              d2l = user.restaurants[j].level;
-              
-              i= user.restaurants.length;
-              break;
+    }
+    user.restaurants[index1].restaurant_id = d2r;
+    user.restaurants[index1].level = d2l;
+
+    user.restaurants[index2].restaurant_id = d1r;
+    user.restaurants[index2].level = d1l;
+    //  console.log("construct calls " + d1.restaurant_id +"   d2  "+d2.restaurant_id);
+    user.markModified("restaurants");
+    await user.save();
+    io.to(user._id).emit("SWAPFINISH", { status: 200, message: obj });
+    io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
+
+  }
+}
+
+async function missionDoneMany(_id, missionId, obj, socket) {
+  let user = await UserPacks.findOne({ id: _id });
+
+  let missions = [];
+
+  if (user && user.missions) {
+    for (let i = 0; i < user.missions.length; i++) {
+      for (let j = 0; j < missionId.length; j++) {
+        let id = missionId[j];
+        console.log("construct calls " + missionId[j] + "   " + user.missions[i].id + "    " + id)
+        if (user.missions[i].id == id) {
+          user.missions[i].complete += 1;
+          user.markModified("missions");
+          if (user.missions[i].complete == user.missions[i].value) {
+            let u = await User.findById(obj.id);
+            if (u) {
+              u.coins = u.coins + user.missions[i].win;
+              missions.push(user.missions[i]);
+              await u.save();
             }
+
           }
 
         }
       }
-      user.restaurants[index1].restaurant_id = d2r;
-      user.restaurants[index1].level =d2l;
-     
-      user.restaurants[index2].restaurant_id = d1r;
-      user.restaurants[index2].level =d1l;
-    //  console.log("construct calls " + d1.restaurant_id +"   d2  "+d2.restaurant_id);
-      user.markModified("restaurants");
-     await user.save();
-     io.to(user._id).emit("SWAPFINISH", { status: 200, message: obj });
-     io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
-    
-  }
-}
-
-async function missionDoneMany(_id,missionId, obj, socket) {
-  let user = await UserPacks.findOne({ id: _id });
-  
-  let missions = [];
-
-  if(user && user.missions)
-  {
-  for (let i = 0; i < user.missions.length; i++) {
-    for (let j = 0; j < missionId.length; j++) {
-      let id = missionId[j];
-      console.log("construct calls " +missionId[j] +  "   "+user.missions[i].id+"    "+id)
-    if (user.missions[i].id == id) {
-      user.missions[i].complete += 1;
-      user.markModified("missions");
-      if (user.missions[i].complete == user.missions[i].value) {
-        let u = await User.findById(obj.id);
-        u.coins = u.coins + user.missions[i].win;
-        missions.push(user.missions[i]);
-        await u.save();
-      
-      }
-    
     }
-  }
-  }
- ;
-  if (missions.length > 0) {
-    socket.emit("MISSIONCOMPLETE", {
-      missionDone: missions,
-    });
-  }
-  user.save();
+    ;
+    if (missions.length > 0) {
+      socket.emit("MISSIONCOMPLETE", {
+        missionDone: missions,
+      });
+    }
+    user.save();
   }
 }
 
-async function missionDone(_id,missionId, obj, socket) {
+async function missionDone(_id, missionId, obj, socket) {
   let user = await UserPacks.findOne({ id: _id });
   let id = missionId;
   let missions = [];
 
-  if(user && user.missions)
-  {
-  for (let i = 0; i < user.missions.length; i++) {
-    if (user.missions[i].id == id) {
-      user.missions[i].complete += 1;
-      user.markModified("missions");
-      if (user.missions[i].complete == user.missions[i].value) {
-        let u = await User.findById(obj.id);
-        u.coins = u.coins + user.missions[i].win;
-        missions.push(user.missions[i]);
-        await u.save();
+  if (user && user.missions) {
+    for (let i = 0; i < user.missions.length; i++) {
+      if (user.missions[i].id == id) {
+        user.missions[i].complete += 1;
+        user.markModified("missions");
+        if (user.missions[i].complete == user.missions[i].value) {
+          let u = await User.findById(obj.id);
+          if (u) {
+            u.coins = u.coins + user.missions[i].win;
+            missions.push(user.missions[i]);
+            await u.save();
+          }
+        }
+        break;
       }
-      break;
+
     }
-  
+    if (missions.length > 0) {
+      socket.emit("MISSIONCOMPLETE", {
+        missionDone: missions,
+      });
+    }
+    await user.save();
   }
-  if (missions.length > 0) {
-    socket.emit("MISSIONCOMPLETE", {
-      missionDone: missions,
-    });
-  }
-  await user.save();
-}
 }
 async function construct(io, obj, socket, cb) {
   console.log("construct calls " + obj.id);
   let user = await User.findById(obj.id);
   if (user) {
-    if (!Array.isArray( user.timers)) {
+    if (!Array.isArray(user.timers)) {
       user.timers = [];
     }
-    let endD = Date.now()+obj.timer*1000;
+    let endD = Date.now() + obj.timer * 1000;
     let data = {
-      type:1,
+      type: 1,
       plot_id: obj.plot_id,
-      restaurant_id:obj.restaurant_id,
-      level:1,
-      timer:obj.timer,
+      restaurant_id: obj.restaurant_id,
+      level: 1,
+      timer: obj.timer,
       end: endD
     };
     user.timers.push(data);
-       
+    user.coins = user.coins - obj.cost;
     user.markModified("timers");
-    await  user.save();
+  
     cb({
-      status: 200,    
+      status: 200,
       message: data,
     });
-    io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
-    let t = obj.timer*1000;
-    setTimeout(async () => {
+    io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
+    let t = obj.timer * 1000;
+    var timer =setTimeout(async () => {
       user.timers.pop(data);
-      let data2 = {      
+      let data2 = {
         plot_id: obj.plot_id,
-        restaurant_id:obj.restaurant_id,
-        level:1,
+        restaurant_id: obj.restaurant_id,
+        level: 1,
       };
-      if (!Array.isArray( user.restaurants)) {
+      if (!Array.isArray(user.restaurants)) {
         user.restaurants = [];
       }
-    //  resetCoinsById( obj.id,-obj.cost);
-      user.coins= user.coins-obj.cost;
-      user.restaurants.push(data2);
-      user.markModified("restaurants");
-     await user.save()
-  
-
-     io.to(user._id).emit("CONSTRUCTFINISH", { status: 200, message: data2 });
-     io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
-
-     let m= [];
-     m.push(3);
-     m.push(4);
-     m.push(5);
-     m.push(6);
-     missionDoneMany(obj.id,m,obj,socket)
-    /*  missionDone(obj.id,3, obj, socket);
-     setTimeout(async () => {
-     missionDone(obj.id,4, obj, socket);
-     setTimeout(async () => { 
-      missionDone(obj.id,5, obj, socket);
-      setTimeout(async () => { 
-        missionDone(obj.id,6, obj, socket);
-       },  600); 
-     },  600); 
-    },  600);  */
-   
+      //  resetCoinsById( obj.id,-obj.cost);
     
-    },  t);  
+      user.restaurants.push(data2);
+      user.timerId = null;
+      user.markModified("restaurants");
+      await user.save()
+
+
+      io.to(user._id).emit("CONSTRUCTFINISH", { status: 200, message: data2 });
+      io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
+
+      let m = [];
+      m.push(3);
+      m.push(4);
+      m.push(5);
+      m.push(6);
+      missionDoneMany(obj.id, m, obj, socket)
+    }, t);
+    user.timerId =timer;
+    console.log("timer "+timer);
+    await user.save();
+    //cancelTimer(io, obj, socket, cb,timer);
   }
 }
 
+async function cancelTimer(io, obj, socket, cb,timer) {
+  let user = await User.findById(obj.id);
+  if (user && user.timerId!=null) {
+   
+   // let endD = Date.now() +   (user.timers[0].timer+20) * 1000;
+    let endD = Date.now() +   1000;
+    let data = {
+      type: 1,
+      plot_id: user.timers[0].plot_id,
+      restaurant_id: user.timers[0].restaurant_id,
+      level: user.timers[0].level,
+      timer:  1,
+      end: endD
+    };
+    while(user.timers.length>0)
+    {
+      user.timers.pop();
+    }
+   // user.timers.length=0;
+    user.timers.push(data);
+    user.coins = user.coins - obj.cost;
+    user.markModified("timers");
+    console.log("CANCEL TIMER" +user.timerId)
+    clearTimeout(user.timerId);
+    cb({
+      status: 200,
+      message: data,
+    });
+    io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
+    let t = 1000;
+    var timer =setTimeout(async () => {
+     
+      
+   
+   
+      if (!Array.isArray(user.restaurants)) {
+        user.restaurants = [];
+      }
+        //resetCoinsById( obj.id,-obj.cost);
+     
+        let l = 0;
+        for (let j = 0; j < user.restaurants.length; j++) {
+          if (user.timers[0].plot_id == user.restaurants[j].plot_id) {
+            l = user.restaurants[j].level;
+            user.restaurants[j].level = l + 1;
+           
+            break;
+          }
+  
+        }
+        user.markModified("restaurants");
+        let data2 = {
+          plot_id:user.timers[0].plot_id,
+          restaurant_id: user.timers[0].restaurant_id,
+          level: l + 1
+        };
+        
+     //   user.timers.pop(data);
+     while(user.timers.length>0)
+     {
+       user.timers.pop();
+     }
+      user.timerId = null;
+     
+      await user.save()
 
+      
+
+      io.to(user._id).emit("UPGRADEFINISH", { status: 200, message: data2 });
+      io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
+
+      let m = [];
+      m.push(7);
+      m.push(12);
+      m.push(13);
+      m.push(14);
+      m.push(15);
+      missionDoneMany(obj.id, m, obj, socket)
+     
+    }, t);
+  }
+   user.timerId =timer;
+    console.log("timer "+timer);
+    await user.save();
+}
 async function upgrade(io, obj, socket, cb) {
   console.log("upgrade calls " + obj.id);
   let user = await User.findById(obj.id);
-  if (user) {
-    if (!Array.isArray( user.timers)) {
+  if (user ) {
+    if (!Array.isArray(user.timers)) {
       user.timers = [];
     }
-    let endD = Date.now()+obj.timer*1000;
+    let endD = Date.now() + obj.timer * 1000;
     let data = {
-      type:1,
+      type: 1,
       plot_id: obj.plot_id,
-      restaurant_id:obj.restaurant_id,
-      level:obj.level+1,
-      timer:obj.timer,
+      restaurant_id: obj.restaurant_id,
+      level: obj.level + 1,
+      timer: obj.timer,
       end: endD
     };
     user.timers.push(data);
-       
+    user.coins = user.coins - obj.cost;
     user.markModified("timers");
-    await  user.save();
+    await user.save();
     cb({
-      status: 200,    
+      status: 200,
       message: data,
     });
-    io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
-    let t = obj.timer*1000;
-    setTimeout(async () => {
+    io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
+    let t = obj.timer * 1000;
+    var timer = setTimeout(async () => {
       user.timers.pop(data);
 
       let l = 0;
-      for(let j=0;j<user.restaurants.length;j++)
-      {
-        if(obj.plot_id == user.restaurants[j].plot_id)
-        {
+      for (let j = 0; j < user.restaurants.length; j++) {
+        if (obj.plot_id == user.restaurants[j].plot_id) {
           l = user.restaurants[j].level;
-          user.restaurants[j].level= l+1;  
+          user.restaurants[j].level = l + 1;
           break;
         }
 
       }
-      user.coins= user.coins-obj.cost;
+     
+      user.timerId = null;
       user.markModified("restaurants");
       await user.save()
-      let data2 = {      
+      let data2 = {
         plot_id: obj.plot_id,
-        restaurant_id:obj.restaurant_id,
-        level:l+1
-      }; 
-    
-    //  resetCoinsById( obj.id,-obj.cost);
-      //if (!Array.isArray( user.restaurants)) {
-     //   user.restaurants = [];
-    //  }
-    //  user.restaurants.push(data2);
-   
-     io.to(user._id).emit("UPGRADEFINISH", { status: 200, message: data2 });
-     io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
+        restaurant_id: obj.restaurant_id,
+        level: l + 1
+      };
 
-     let m= [];
-     m.push(7);
-     m.push(12);
-     m.push(13);
-     m.push(14);
-     m.push(15);
-     missionDoneMany(obj.id,m,obj,socket)
-/* 
-     missionDone(obj.id,7, obj, socket);
-     setTimeout(async () => {
-     missionDone(obj.id,12, obj, socket);
-     setTimeout(async () => { 
-      missionDone(obj.id,13, obj, socket);
-      setTimeout(async () => { 
-        missionDone(obj.id,14, obj, socket);
-      
-       setTimeout(async () => { 
-        missionDone(obj.id,15, obj, socket);
-      },  600); 
-       },  600); 
-     },  600); 
-    },  600);  */
-    }, t);  
+      //  resetCoinsById( obj.id,-obj.cost);
+      //if (!Array.isArray( user.restaurants)) {
+      //   user.restaurants = [];
+      //  }
+      //  user.restaurants.push(data2);
+
+      io.to(user._id).emit("UPGRADEFINISH", { status: 200, message: data2 });
+      io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
+
+      let m = [];
+      m.push(7);
+      m.push(12);
+      m.push(13);
+      m.push(14);
+      m.push(15);
+      missionDoneMany(obj.id, m, obj, socket)
+     
+    }, t);
+    user.timerId =timer;
+    await user.save();
+    console.log("timer "+timer);
   }
 }
 
@@ -429,18 +493,17 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
     //   }
     // }
     // else
-   
+
     if (room.players_joined.length == 1) {
       for (let i = 0; i < gameplay.users_data.length; i++) {
-    
-        if(  userId!=gameplay.users_data[i]._id)
-        {
-          gameplay.winnerId =gameplay.users_data[i]._id;
+
+        if (userId != gameplay.users_data[i]._id) {
+          gameplay.winnerId = gameplay.users_data[i]._id;
         }
       }
-        //  gameplay.winnerId = room.players_joined[0]._id;
-   
-          
+      //  gameplay.winnerId = room.players_joined[0]._id;
+
+
       await gameplay.save();
       io.to(room._id).emit("GAMEEND", { status: 200, gameplay: gameplay });
       await endGame(gameId, io);
@@ -455,10 +518,9 @@ async function endGame(gameId, io) {
   //  }
   for (let i = 0; i < gamePlay.users_data.length; i++) {
     let user = await User.findById(gamePlay.users_data[i]._id);
-  if(  gamePlay.winnerId==gamePlay.users_data[i]._id)
-  {
-    user.wins=user.wins+1;
-  }
+    if (gamePlay.winnerId == gamePlay.users_data[i]._id) {
+      user.wins = user.wins + 1;
+    }
     user.game_id = null;
     user.room_id = null;
     user.save();
@@ -479,7 +541,34 @@ async function endGame(gameId, io) {
     });
 }
 
+async function useTimerPack(obj, cb) {
+  let user = await User.findById(obj.id);
+  if (user) {
+    if (user.timerPacks > 0) {
+      user.timerPacks -= 1;
+      await user.save();
+      cb({
+        status: 200,
+        timerPacks: user.timerPacks
+      })
+    }
 
+  }
+}
+
+
+async function addTimerPack(obj, cb) {
+  let user = await User.findById(obj.id);
+  if (user) {
+    user.timerPacks += 10;
+    await user.save();
+    cb({
+      status: 200,
+      timerPacks: user.timerPacks
+    })
+
+  }
+}
 
 async function addPlayerPegs(obj, cb) {
   let gameplay = await GamePlay.findOne({ game_id: obj.room_id });

@@ -70,6 +70,11 @@ timers: {
   required: false,
   default: []
 },
+timerId: {
+  type: Number,
+  required: false,
+  default: 0,
+},
 
 tutorial: {
   type: Number,
@@ -86,7 +91,11 @@ step: {
     required: false,
     default: 0,
   },
-  
+  timerPacks: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
   wins: {
     type: Number,
     required: false,
