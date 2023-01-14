@@ -123,7 +123,7 @@ async function missionDoneMany(_id, missionId, obj, socket) {
     for (let i = 0; i < user.missions.length; i++) {
       for (let j = 0; j < missionId.length; j++) {
         let id = missionId[j];
-        console.log("construct calls " + missionId[j] + "   " + user.missions[i].id + "    " + id)
+      //  console.log("construct calls " + missionId[j] + "   " + user.missions[i].id + "    " + id)
         if (user.missions[i].id == id) {
           user.missions[i].complete += 1;
           user.markModified("missions");
@@ -181,7 +181,7 @@ async function missionDone(_id, missionId, obj, socket) {
   }
 }
 async function construct(io, obj, socket, cb) {
-  console.log("construct calls " + obj.id);
+  //console.log("construct calls " + obj.id);
   let user = await User.findById(obj.id);
   if (user) {
     if (!Array.isArray(user.timers)) {

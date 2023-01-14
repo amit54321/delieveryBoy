@@ -27,7 +27,7 @@ module.exports = function (io) {
     let isRevoked = socket.handshake.query.token;
 
 
-    try {
+    try{
       // const decoded = jwt.verify(isRevoked.trim(), secret);
       //  all_users[socket.id] = decoded.sub;
       console.log(
