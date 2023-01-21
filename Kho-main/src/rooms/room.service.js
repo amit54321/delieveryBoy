@@ -24,9 +24,9 @@ module.exports = {
 
 async function chat(obj, socket, io, cb) {
   let room = await Room.findById(obj.gameId);
-    //console.log("pop user dffddf " +obj.gameId)
+ 
   if (room) {
-   // console.log("pop user gameIdFind " +obj.gameId)
+   
     io.to(room._id).emit("CHATCALLBACK", { chat: obj });
   }
 }

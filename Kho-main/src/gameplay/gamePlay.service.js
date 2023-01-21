@@ -58,7 +58,7 @@ async function taskDone(io, obj) {
         if (game.tasksDone[i].taskDone.length >= 10) {
 
           game.winnerId = obj.id;
-          resetCoinsById(obj.id, 500);
+          resetCoinsById(obj.id, 200);
           io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
           endGame(obj.game_id, io);
           await game.save();
@@ -72,7 +72,6 @@ async function taskDone(io, obj) {
 }
 
 async function swap(io, obj, socket, cb) {
-  console.log("swap calls " + obj.id);
   let user = await User.findById(obj.id);
   if (user) {
 
@@ -494,7 +493,8 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
     // }
     // else
 
-    if (room.players_joined.length == 1) {
+  //  if (room.players_joined.length == 1) 
+    {
       for (let i = 0; i < gameplay.users_data.length; i++) {
 
         if (userId != gameplay.users_data[i]._id) {
@@ -506,13 +506,13 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
 
       await gameplay.save();
       io.to(room._id).emit("GAMEEND", { status: 200, gameplay: gameplay });
-      await endGame(gameId, io);
+      await endGame(gameplay, io);
     }
   }
 }
 
-async function endGame(gameId, io) {
-  let gamePlay = await GamePlay.findOne({ game_id: gameId });
+async function endGame(gameplay, io) {
+ // let gamePlay = await GamePlay.findOne({ game_id: gameId });
   // if (!Array.isArray(round.players)) {
   //     round.players = [];
   //  }
@@ -527,11 +527,11 @@ async function endGame(gameId, io) {
   }
   console.log("game ends");
   //  await Round.deleteOne({ gameId: gameId });
-  await Room.deleteOne({ _id: gameId });
-  await GamePlay.deleteOne({ game_id: gameId });
+  await Room.deleteOne({ _id: gamePlay.game_id });
+  await GamePlay.deleteOne({ game_id: gamePlay.game_id });
 
   io.of("/")
-    .in(gameId)
+    .in(gamePlay.game_id)
     .clients((err, clients) => {
       console.log(clients.length);
       clients.forEach((clientId) =>

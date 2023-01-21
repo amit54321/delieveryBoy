@@ -129,6 +129,20 @@ router.post("/users/tutorialStep", async (req, res) => {
     res.status(400).send({ status: 400, message: e.message });
   }
 });
+router.post("/users/minimumData", async (req, res) => {
+  try {
+    let user = await User.findById(req.body.id);
+    let d= 
+    {
+      coins:user.coins,
+      matches:user.matches,
+      wins:user.wins
+    }
+    res.send({ status: 200, message: d });
+  } catch (e) {
+    res.status(400).send({ status: 400, message: e.message });
+  }
+});
 
 router.post("/users/data", async (req, res) => {
   try {
