@@ -58,7 +58,7 @@ async function taskDone(io, obj) {
         if (game.tasksDone[i].taskDone.length >= 10) {
 
           game.winnerId = obj.id;
-          resetCoinsById(obj.id, 200);
+          resetCoinsById(obj.id,150);
           io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
           endGame(obj.game_id, io);
           await game.save();

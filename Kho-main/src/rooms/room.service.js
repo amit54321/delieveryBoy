@@ -243,7 +243,6 @@ async function makeAI(room, io,socket) {
     setTimeout(async () => {
       if (gameplay) {
         await resetCoins(room);
-        console.log("gameplay calls");
         if (!Array.isArray( gameplay.tasks)) {
           gameplay.tasks = [];
         }
@@ -263,16 +262,13 @@ async function makeAI(room, io,socket) {
 
           playGameMission(room.players_joined[i]._id,socket);
         }
-        console.log("ai calls " + aiUser);
            if(aiUser!=0)
            {
              let last =0;
           for(let i=1;i<=10;i++)
             {
-             let t = last +  (Math.floor(Math.random() * (20 - 1 + 1) + 10)) *1000;
+             let t = last +  (Math.floor(Math.random() * (40 - 1 + 1) + 15)) *1000;
              last =t;
-             console.log("ai calls 2" + last);
-             console.log("ai calls 2" + t);
             setTimeout(async () => {
               let data = {
               id :aiUser,
