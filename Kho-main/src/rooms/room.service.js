@@ -503,7 +503,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
             } 
             gameplay.markModified("tasks");
             await  gameplay.save();
-            console.log("ai startGame  calls " + aiUser);
+           
             io.to(room._id).emit("STARTGAME", {
               status: 200,
               gameplay: gameplay,
