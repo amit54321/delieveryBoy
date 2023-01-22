@@ -403,8 +403,9 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         },
       },
     ]);
+  
     console.log("ROOM  " + roomLength.length);
-    if (roomLength.length > 0) {
+    if (roomLength.length > 0 && roomLength[0].end_time - Date.now()>=0) {
       let room = roomLength[0];
       if (!Array.isArray(room.players_joined)) {
         room.players_joined = [];
@@ -439,6 +440,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         status: 200,
         message: "You have joined the room",
         room: room,
+        timeLeft: timeLeft
       });
       if (room.no_of_players === room.players_joined.length) {
         Room.findByIdAndUpdate(
@@ -454,7 +456,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
           }
         );
 
-      
+      console.log("INSIDE ROOM PLAYERS")
         let gameplay = new GamePlay();
         gameplay.game_id = room._id;
        if (!Array.isArray(gameplay.tasksDone)) {
@@ -516,6 +518,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         ///STRT GAME HERE
       }
     } else {
+      console.log("INSIDE CREATE ROOM")
       await createRoom(obj, socket, io, cb);
     }
   }

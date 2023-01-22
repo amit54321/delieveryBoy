@@ -506,16 +506,16 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
 
       await gameplay.save();
       io.to(room._id).emit("GAMEEND", { status: 200, gameplay: gameplay });
-      await endGame(gameplay, io);
+      await endGame(gameId, io);
     }
   }
 }
 
-async function endGame(gamePlay, io) {
- // let gamePlay = await GamePlay.findOne({ game_id: gameId });
+async function endGame(gameId, io) {
+  let gamePlay = await GamePlay.findOne({ game_id: gameId });
   // if (!Array.isArray(round.players)) {
-  //     round.players = [];
-  //  }
+   //   round.players = [];
+  // }
   for (let i = 0; i < gamePlay.users_data.length; i++) {
     let user = await User.findById(gamePlay.users_data[i]._id);
     if (gamePlay.winnerId == gamePlay.users_data[i]._id) {
