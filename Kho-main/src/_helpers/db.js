@@ -18,6 +18,7 @@ module.exports = {
   UserPacks: require("../models/userpacks.model"),
   Analytics: require("../models/analytics.model"),
   Room: require("../rooms/room.model"),
+  LeaderBoard: require("../models/leaderboard.model"),
   GamePlay: require("../gameplay/gameplay.model"),
   Round: require("../gameplay/round.model"),
   PlayerPegs: require("../gameplay/playerpegs.model"),

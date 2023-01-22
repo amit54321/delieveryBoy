@@ -11,17 +11,57 @@ const User = db.User;
 const UserPacks = db.UserPacks;
 const Verification = require("../models/verification.modal");
 
-
+router.post("/users/setScore", async (req, res) => {
+  let user = await User.findById(req.body.id);
+  let leaderBoard = await Leaderboard.findOne({ name: req.body.name });
+  if (user) {
+    if (leaderBoard) {
+      if (!Array.isArray(leaderBoard.leaderBoard)) {
+        leaderBoard.leaderBoard = [];
+      }
+      let found = false;
+      for (let i = 0; i < leaderBoard.length; i++) {
+        if (leaderBoard.leaderBoard.id == req.body.id) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        let data = { id: req.body.id, score: req.body.score, name: user.name };
+        leaderBoard.leaderBoard.push(data);
+        leaderBoard.leaderBoard.sort(compareScore);
+        await leaderBoard.save();
+      }
+    } else {
+      let leaderboard = new Leaderboard();
+      leaderboard.name = req.body.name;
+      let data = { id: req.body.id, score: req.body.score, name: user.name };
+      leaderBoard.leaderBoard.push(data);
+      leaderBoard.leaderBoard.sort(compareScore);
+      await leaderBoard.save();
+    }
+  }
+});
+function compareScore(a, b) {
+  return a.score - b.score;
+}
 //var jwt = require('jsonwebtoken');
 //var bcrypt = require('bcryptjs');
 //var config = require('../config');
 
-
+router.post("/users/getLeaderBoard", async (req, res) => {
+  let leaderBoard = await Leaderboard.findOne({ name: req.body.name });
+  if (leaderBoard) {
+    res.status(200).send({
+      message: leaderBoard,
+      status: 200,
+    });
+  }
+});
 
 router.post("/users/register", async (req, res) => {
-  console.log("game ends  " + req.body.deviceId);
   let user = await User.findOne({ deviceId: req.body.deviceId });
- 
+
   if (user) {
     user.deviceId = req.body.deviceId;
     await user.save();
@@ -39,12 +79,11 @@ router.post("/users/register", async (req, res) => {
   } else {
     let user = new User();
 
-   
     user.token = user._id;
 
-   // const secret = config.secret;
+    // const secret = config.secret;
     // save user token
-   // user.token = secret;
+    // user.token = secret;
     user.deviceId = req.body.deviceId;
     await user.save();
     let allMissions = await userPacks.sendAllMissionsJson(user._id);
@@ -121,7 +160,7 @@ router.post("/users/login", async (req, res) => {
 router.post("/users/tutorialStep", async (req, res) => {
   try {
     let user = await User.findById(req.body.id);
-    user.tutorial =1;
+    user.tutorial = 1;
     await user.save();
     console.log("TUTORIAL FINISHED");
     res.status(200).send({ status: 200, message: user });
@@ -132,15 +171,17 @@ router.post("/users/tutorialStep", async (req, res) => {
 router.post("/users/minimumData", async (req, res) => {
   try {
     let user = await User.findById(req.body.id);
-    let d= 
-    {
-      coins:user.coins,
-      matches:user.matches,
-      wins:user.wins,
-      avatar:user.avatar,
-      name:user.name
+    if (user) {
+      let d = {
+        coins: user.coins,
+        matches: user.matches,
+        wins: user.wins,
+        avatar: user.avatar,
+        name: user.name,
+        delievery: delievery,
+      };
+      res.send({ status: 200, message: d });
     }
-    res.send({ status: 200, message: d });
   } catch (e) {
     res.status(400).send({ status: 400, message: e.message });
   }
@@ -174,7 +215,7 @@ router.post("/users/watchads", async (req, res) => {
     user.save();
     res.send({ status: 200, message: user });
   } catch (e) {
-    io.to(user._id).emit("UPDATEDUSER", { status: 200, message:user });
+    io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
   }
 });
 
@@ -237,16 +278,15 @@ router.post("/forgot/new/password", async (req, res) => {
 });
 router.post("/users/addcoins", async (req, res) => {
   let user = await User.findById(req.body.id);
-    user.coins = user.coins + req.body.coins;
-    
-    await user.save();
-    console.log("user " + user.coins);
-  
-    res.send({
-      status: 200,
-      message: user,
-    });
-  
+  user.coins = user.coins + req.body.coins;
+
+  await user.save();
+  console.log("user " + user.coins);
+
+  res.send({
+    status: 200,
+    message: user,
+  });
 });
 
 router.post("/users/dailyreward", async (req, res) => {

@@ -7,17 +7,17 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: false,
-    default:""
+    default: "",
   },
- 
+
   deviceId: {
     type: String,
     trim: true,
     required: false,
-    
+
     lowercase: true,
   },
- 
+
   token: {
     type: String,
   },
@@ -58,34 +58,33 @@ const userSchema = new mongoose.Schema({
     default: 5000,
   },
 
-
   restaurants: {
     type: Array,
     required: false,
-    default: []
-},
+    default: [],
+  },
 
-timers: {
-  type: Array,
-  required: false,
-  default: []
-},
-timerId: {
-  type: Number,
-  required: false,
-  default: 0,
-},
+  timers: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  timerId: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
 
-tutorial: {
-  type: Number,
-  required: false,
-  default: 0,
-},
-step: {
-  type: Number,
-  required: false,
-  default: 0,
-},
+  tutorial: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  step: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
   matches: {
     type: Number,
     required: false,
@@ -97,6 +96,11 @@ step: {
     default: 0,
   },
   wins: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  delievery: {
     type: Number,
     required: false,
     default: 0,

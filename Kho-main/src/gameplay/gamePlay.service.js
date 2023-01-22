@@ -22,16 +22,13 @@ module.exports = {
   missionDoneMany,
   useTimerPack,
   addTimerPack,
-  cancelTimer
+  cancelTimer,
 };
 async function resetCoinsById(id, coin) {
-
   User.findByIdAndUpdate(
     id,
     {
-
-      $inc: { "coins": coin },
-
+      $inc: { coins: coin },
     },
     { new: true },
     function (err, doc) {
@@ -42,7 +39,6 @@ async function resetCoinsById(id, coin) {
       }
     }
   );
-
 }
 async function taskDone(io, obj) {
   let game = await GamePlay.findOne({ game_id: obj.game_id });
@@ -51,31 +47,30 @@ async function taskDone(io, obj) {
       if (game.tasksDone[i].id == obj.id) {
         game.tasksDone[i].taskDone.push(obj.taskId);
 
-        io.to(obj.game_id).emit("TASKRECEIVED", { status: 200, message: game.tasksDone[i].taskDone.length,obj:obj });
+        io.to(obj.game_id).emit("TASKRECEIVED", {
+          status: 200,
+          message: game.tasksDone[i].taskDone.length,
+          obj: obj,
+        });
 
         game.markModified("tasksDone");
         await game.save();
         if (game.tasksDone[i].taskDone.length >= 10) {
-
           game.winnerId = obj.id;
-          resetCoinsById(obj.id,150);
+          resetCoinsById(obj.id, 150);
           io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
           endGame(obj.game_id, io);
           await game.save();
         }
         break;
       }
-
     }
-
   }
 }
 
 async function swap(io, obj, socket, cb) {
   let user = await User.findById(obj.id);
   if (user) {
-
-
     if (!Array.isArray(user.restaurants)) {
       user.restaurants = [];
     }
@@ -96,7 +91,6 @@ async function swap(io, obj, socket, cb) {
             break;
           }
         }
-
       }
     }
     user.restaurants[index1].restaurant_id = d2r;
@@ -109,7 +103,6 @@ async function swap(io, obj, socket, cb) {
     await user.save();
     io.to(user._id).emit("SWAPFINISH", { status: 200, message: obj });
     io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
-
   }
 }
 
@@ -122,7 +115,7 @@ async function missionDoneMany(_id, missionId, obj, socket) {
     for (let i = 0; i < user.missions.length; i++) {
       for (let j = 0; j < missionId.length; j++) {
         let id = missionId[j];
-      //  console.log("construct calls " + missionId[j] + "   " + user.missions[i].id + "    " + id)
+        //  console.log("construct calls " + missionId[j] + "   " + user.missions[i].id + "    " + id)
         if (user.missions[i].id == id) {
           user.missions[i].complete += 1;
           user.markModified("missions");
@@ -133,13 +126,10 @@ async function missionDoneMany(_id, missionId, obj, socket) {
               missions.push(user.missions[i]);
               await u.save();
             }
-
           }
-
         }
       }
     }
-    ;
     if (missions.length > 0) {
       socket.emit("MISSIONCOMPLETE", {
         missionDone: missions,
@@ -169,7 +159,6 @@ async function missionDone(_id, missionId, obj, socket) {
         }
         break;
       }
-
     }
     if (missions.length > 0) {
       socket.emit("MISSIONCOMPLETE", {
@@ -193,19 +182,19 @@ async function construct(io, obj, socket, cb) {
       restaurant_id: obj.restaurant_id,
       level: 1,
       timer: obj.timer,
-      end: endD
+      end: endD,
     };
     user.timers.push(data);
     user.coins = user.coins - obj.cost;
     user.markModified("timers");
-  
+
     cb({
       status: 200,
       message: data,
     });
     io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
     let t = obj.timer * 1000;
-    var timer =setTimeout(async () => {
+    var timer = setTimeout(async () => {
       user.timers.pop(data);
       let data2 = {
         plot_id: obj.plot_id,
@@ -216,12 +205,11 @@ async function construct(io, obj, socket, cb) {
         user.restaurants = [];
       }
       //  resetCoinsById( obj.id,-obj.cost);
-    
+
       user.restaurants.push(data2);
       user.timerId = null;
       user.markModified("restaurants");
-      await user.save()
-
+      await user.save();
 
       io.to(user._id).emit("CONSTRUCTFINISH", { status: 200, message: data2 });
       io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
@@ -231,38 +219,36 @@ async function construct(io, obj, socket, cb) {
       m.push(4);
       m.push(5);
       m.push(6);
-      missionDoneMany(obj.id, m, obj, socket)
+      missionDoneMany(obj.id, m, obj, socket);
     }, t);
-    user.timerId =timer;
-    console.log("timer "+timer);
+    user.timerId = timer;
+    console.log("timer " + timer);
     await user.save();
     //cancelTimer(io, obj, socket, cb,timer);
   }
 }
 
-async function cancelTimer(io, obj, socket, cb,timer) {
+async function cancelTimer(io, obj, socket, cb, timer) {
   let user = await User.findById(obj.id);
-  if (user && user.timerId!=null) {
-   
-   // let endD = Date.now() +   (user.timers[0].timer+20) * 1000;
-    let endD = Date.now() +   1000;
+  if (user && user.timerId != null) {
+    // let endD = Date.now() +   (user.timers[0].timer+20) * 1000;
+    let endD = Date.now() + 1000;
     let data = {
       type: 1,
       plot_id: user.timers[0].plot_id,
       restaurant_id: user.timers[0].restaurant_id,
       level: user.timers[0].level,
-      timer:  1,
-      end: endD
+      timer: 1,
+      end: endD,
     };
-    while(user.timers.length>0)
-    {
+    while (user.timers.length > 0) {
       user.timers.pop();
     }
-   // user.timers.length=0;
+    // user.timers.length=0;
     user.timers.push(data);
     user.coins = user.coins - obj.cost;
     user.markModified("timers");
-    console.log("CANCEL TIMER" +user.timerId)
+    console.log("CANCEL TIMER" + user.timerId);
     clearTimeout(user.timerId);
     cb({
       status: 200,
@@ -270,43 +256,35 @@ async function cancelTimer(io, obj, socket, cb,timer) {
     });
     io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
     let t = 1000;
-    var timer =setTimeout(async () => {
-     
-      
-   
-   
+    var timer = setTimeout(async () => {
       if (!Array.isArray(user.restaurants)) {
         user.restaurants = [];
       }
-        //resetCoinsById( obj.id,-obj.cost);
-     
-        let l = 0;
-        for (let j = 0; j < user.restaurants.length; j++) {
-          if (user.timers[0].plot_id == user.restaurants[j].plot_id) {
-            l = user.restaurants[j].level;
-            user.restaurants[j].level = l + 1;
-           
-            break;
-          }
-  
-        }
-        user.markModified("restaurants");
-        let data2 = {
-          plot_id:user.timers[0].plot_id,
-          restaurant_id: user.timers[0].restaurant_id,
-          level: l + 1
-        };
-        
-     //   user.timers.pop(data);
-     while(user.timers.length>0)
-     {
-       user.timers.pop();
-     }
-      user.timerId = null;
-     
-      await user.save()
+      //resetCoinsById( obj.id,-obj.cost);
 
-      
+      let l = 0;
+      for (let j = 0; j < user.restaurants.length; j++) {
+        if (user.timers[0].plot_id == user.restaurants[j].plot_id) {
+          l = user.restaurants[j].level;
+          user.restaurants[j].level = l + 1;
+
+          break;
+        }
+      }
+      user.markModified("restaurants");
+      let data2 = {
+        plot_id: user.timers[0].plot_id,
+        restaurant_id: user.timers[0].restaurant_id,
+        level: l + 1,
+      };
+
+      //   user.timers.pop(data);
+      while (user.timers.length > 0) {
+        user.timers.pop();
+      }
+      user.timerId = null;
+
+      await user.save();
 
       io.to(user._id).emit("UPGRADEFINISH", { status: 200, message: data2 });
       io.to(user._id).emit("UPDATEDUSER", { status: 200, message: user });
@@ -317,18 +295,17 @@ async function cancelTimer(io, obj, socket, cb,timer) {
       m.push(13);
       m.push(14);
       m.push(15);
-      missionDoneMany(obj.id, m, obj, socket)
-     
+      missionDoneMany(obj.id, m, obj, socket);
     }, t);
   }
-   user.timerId =timer;
-    console.log("timer "+timer);
-    await user.save();
+  user.timerId = timer;
+  console.log("timer " + timer);
+  await user.save();
 }
 async function upgrade(io, obj, socket, cb) {
   console.log("upgrade calls " + obj.id);
   let user = await User.findById(obj.id);
-  if (user ) {
+  if (user) {
     if (!Array.isArray(user.timers)) {
       user.timers = [];
     }
@@ -339,7 +316,7 @@ async function upgrade(io, obj, socket, cb) {
       restaurant_id: obj.restaurant_id,
       level: obj.level + 1,
       timer: obj.timer,
-      end: endD
+      end: endD,
     };
     user.timers.push(data);
     user.coins = user.coins - obj.cost;
@@ -361,16 +338,15 @@ async function upgrade(io, obj, socket, cb) {
           user.restaurants[j].level = l + 1;
           break;
         }
-
       }
-     
+
       user.timerId = null;
       user.markModified("restaurants");
-      await user.save()
+      await user.save();
       let data2 = {
         plot_id: obj.plot_id,
         restaurant_id: obj.restaurant_id,
-        level: l + 1
+        level: l + 1,
       };
 
       //  resetCoinsById( obj.id,-obj.cost);
@@ -388,17 +364,13 @@ async function upgrade(io, obj, socket, cb) {
       m.push(13);
       m.push(14);
       m.push(15);
-      missionDoneMany(obj.id, m, obj, socket)
-     
+      missionDoneMany(obj.id, m, obj, socket);
     }, t);
-    user.timerId =timer;
+    user.timerId = timer;
     await user.save();
-    console.log("timer "+timer);
+    console.log("timer " + timer);
   }
 }
-
-
-
 
 async function aiTurn(io, round, id, pegType, color) {
   let data = { _id: id, game_id: round.gameId, rolled: true };
@@ -443,10 +415,6 @@ async function aiTurn(io, round, id, pegType, color) {
     }
   }, 1000);
 }
-
-
-
-
 
 async function quitGame(obj, socket, io) {
   io.to(obj.game_id).emit("PLAYERQUIT", { status: 200, dice: obj });
@@ -493,16 +461,14 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
     // }
     // else
 
-  //  if (room.players_joined.length == 1) 
+    //  if (room.players_joined.length == 1)
     {
       for (let i = 0; i < gameplay.users_data.length; i++) {
-
         if (userId != gameplay.users_data[i]._id) {
           gameplay.winnerId = gameplay.users_data[i]._id;
         }
       }
       //  gameplay.winnerId = room.players_joined[0]._id;
-
 
       await gameplay.save();
       io.to(room._id).emit("GAMEEND", { status: 200, gameplay: gameplay });
@@ -514,16 +480,23 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
 async function endGame(gameId, io) {
   let gamePlay = await GamePlay.findOne({ game_id: gameId });
   // if (!Array.isArray(round.players)) {
-   //   round.players = [];
+  //   round.players = [];
   // }
   for (let i = 0; i < gamePlay.users_data.length; i++) {
     let user = await User.findById(gamePlay.users_data[i]._id);
-    if (gamePlay.winnerId == gamePlay.users_data[i]._id) {
-      user.wins = user.wins + 1;
+    if (user) {
+      if (gamePlay.winnerId == gamePlay.users_data[i]._id) {
+        user.wins = user.wins + 1;
+      }
+      for (let i = 0; i < gamePlay.tasksDone.length; i++) {
+        if (gamePlay.tasksDone[i].id == user._id) {
+          user.delievery += gamePlay.tasksDone[i].taskDone.length;
+        }
+      }
+      user.game_id = null;
+      user.room_id = null;
+      user.save();
     }
-    user.game_id = null;
-    user.room_id = null;
-    user.save();
   }
   console.log("game ends");
   //  await Round.deleteOne({ gameId: gameId });
@@ -549,13 +522,11 @@ async function useTimerPack(obj, cb) {
       await user.save();
       cb({
         status: 200,
-        timerPacks: user.timerPacks
-      })
+        timerPacks: user.timerPacks,
+      });
     }
-
   }
 }
-
 
 async function addTimerPack(obj, cb) {
   let user = await User.findById(obj.id);
@@ -564,9 +535,8 @@ async function addTimerPack(obj, cb) {
     await user.save();
     cb({
       status: 200,
-      timerPacks: user.timerPacks
-    })
-
+      timerPacks: user.timerPacks,
+    });
   }
 }
 
