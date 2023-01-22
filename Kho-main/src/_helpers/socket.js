@@ -46,7 +46,8 @@ module.exports = function (io) {
 
         let gameplay = await GamePlay.findOne({ game_id: user.game_id });
         if (gameplay) {
-          socket.join(user.room_id._id);
+          socket.leave(user.game_id);
+          socket.join(user.game_id);
           socket.emit("STARTGAME", {
             status: 200,
             gameplay: gameplay,

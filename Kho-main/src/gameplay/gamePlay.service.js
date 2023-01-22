@@ -51,7 +51,7 @@ async function taskDone(io, obj) {
       if (game.tasksDone[i].id == obj.id) {
         game.tasksDone[i].taskDone.push(obj.taskId);
 
-        io.to(obj.game_id).emit("TASKRECEIVED", { status: 200, message: obj });
+        io.to(obj.game_id).emit("TASKRECEIVED", { status: 200, message: game.tasksDone[i].taskDone.length,obj:obj });
 
         game.markModified("tasksDone");
         await game.save();
