@@ -511,7 +511,7 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
   }
 }
 
-async function endGame(gameplay, io) {
+async function endGame(gamePlay, io) {
  // let gamePlay = await GamePlay.findOne({ game_id: gameId });
   // if (!Array.isArray(round.players)) {
   //     round.players = [];
