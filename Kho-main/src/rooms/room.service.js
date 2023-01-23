@@ -56,7 +56,7 @@ async function leaveRoom(obj, socket, io, cb) {
           message: "You have left the room",
           room: room,
         });
-        console.log("pop user dffddf " + room.players_joined);
+        // console.log("pop user dffddf " + room.players_joined);
         socket.leave(room._id);
       }
     }
@@ -64,7 +64,7 @@ async function leaveRoom(obj, socket, io, cb) {
 }
 
 async function createRoom(obj, socket, io, cb) {
-  console.log("create room" + { obj });
+  // console.log("create room" + { obj });
   let user = await User.findById(mongoose.Types.ObjectId(obj._id));
   if (user.room_id == null) {
     let room = new Room();
@@ -113,10 +113,10 @@ async function createRoom(obj, socket, io, cb) {
             return;
           }
           io.to(tempRoom._id).emit("ROOMCANCEL", { status: 200, tempRoom });
-          console.log("gameplay delete");
+          // console.log("gameplay delete");
 
           if (tempRoom) {
-            console.log("players" + tempRoom.players_joined.length);
+            //   console.log("players" + tempRoom.players_joined.length);
             for (let i = 0; i < tempRoom.players_joined.length; i++) {
               mongoose.set("useFindAndModify", false);
               User.findByIdAndUpdate(
@@ -127,7 +127,7 @@ async function createRoom(obj, socket, io, cb) {
                   if (err) {
                     throw err;
                   } else {
-                    console.log("Updated");
+                    //  console.log("Updated");
                   }
                 }
               );
@@ -135,10 +135,10 @@ async function createRoom(obj, socket, io, cb) {
             }
             await Room.findByIdAndDelete(tempRoom._id)
               .then(function () {
-                console.log("Data deleted"); // Success
+                //  console.log("Data deleted"); // Success
               })
               .catch(function (error) {
-                console.log(error); // Failure
+                // console.log(error); // Failure
               });
           }
         }
@@ -155,7 +155,7 @@ async function createRoom(obj, socket, io, cb) {
 }
 async function makeAI(room, io, socket) {
   let playersRequired = room.no_of_players - room.players_joined.length;
-  console.log("Players  " + playersRequired);
+  // console.log("Players  " + playersRequired);
   for (let i = 0; i < playersRequired; i++) {
     let user = await User.findOne({
       $and: [{ game_id: null }, { role: "ai" }, { room_id: null }],
@@ -180,7 +180,7 @@ async function makeAI(room, io, socket) {
         if (err) {
           throw err;
         } else {
-          console.log("Updated");
+          //    console.log("Updated");
         }
       }
     );
@@ -200,7 +200,7 @@ async function makeAI(room, io, socket) {
         if (err) {
           throw err;
         } else {
-          console.log("Updated");
+          //  console.log("Updated");
         }
       }
     );
@@ -257,8 +257,8 @@ async function makeAI(room, io, socket) {
         if (aiUser != 0) {
           let last = 0;
           for (let i = 1; i <= 10; i++) {
-            // let t = last +  (Math.floor(Math.random() * (40 - 1 + 1) + 15)) *1000;
-            let t = last + Math.floor(Math.random() * (4 - 1 + 1) + 2) * 1000;
+            let t = last + Math.floor(Math.random() * (40 - 1 + 1) + 15) * 1000;
+
             last = t;
             setTimeout(async () => {
               let data = {
@@ -303,7 +303,7 @@ async function createAiUser() {
     user.restaurants.push(data2);
     user.markModified("restaurants");
   }
-  console.log("player created " + user.name);
+  // console.log("player created " + user.name);
   ai_user = await user.save();
   return user;
 }
@@ -391,7 +391,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
       },
     ]);
 
-    console.log("ROOM  " + roomLength.length);
+    //console.log("ROOM  " + roomLength.length);
     if (roomLength.length > 0 && roomLength[0].end_time - Date.now() >= 0) {
       let room = roomLength[0];
       if (!Array.isArray(room.players_joined)) {
@@ -410,7 +410,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
           if (err) {
             throw err;
           } else {
-            console.log("Updated");
+            //  console.log("Updated");
           }
         }
       );
@@ -438,12 +438,12 @@ async function lookForPublicRoom(obj, socket, io, cb) {
             if (err) {
               throw err;
             } else {
-              console.log("Updated");
+              //  console.log("Updated");
             }
           }
         );
 
-        console.log("INSIDE ROOM PLAYERS");
+        //  console.log("INSIDE ROOM PLAYERS");
         let gameplay = new GamePlay();
         gameplay.game_id = room._id;
         if (!Array.isArray(gameplay.tasksDone)) {
@@ -472,7 +472,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         setTimeout(async () => {
           if (gameplay) {
             await resetCoins(room);
-            console.log("gameplay calls");
+            // console.log("gameplay calls");
             if (!Array.isArray(gameplay.tasks)) {
               gameplay.tasks = [];
             }
@@ -500,7 +500,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         ///STRT GAME HERE
       }
     } else {
-      console.log("INSIDE CREATE ROOM");
+      // console.log("INSIDE CREATE ROOM");
       await createRoom(obj, socket, io, cb);
     }
   }
@@ -568,7 +568,7 @@ async function joinRoom(obj, socket, io, cb) {
               if (err) {
                 throw err;
               } else {
-                console.log("Updated");
+                // console.log("Updated");
               }
             }
           );
@@ -604,7 +604,7 @@ async function joinRoom(obj, socket, io, cb) {
           setTimeout(async () => {
             if (gameplay) {
               await resetCoins(room);
-              console.log("gameplay calls");
+              // console.log("gameplay calls");
               if (!Array.isArray(gameplay.tasks)) {
                 gameplay.tasks = [];
               }
@@ -665,7 +665,7 @@ async function resetCoins(room) {
         if (err) {
           throw err;
         } else {
-          console.log("Updated User");
+          //  console.log("Updated User");
         }
       }
     );
@@ -682,7 +682,7 @@ async function resetCoinsById(id, coin) {
       if (err) {
         throw err;
       } else {
-        console.log("Updated User");
+        // console.log("Updated User");
       }
     }
   );
@@ -701,7 +701,7 @@ async function resetCoinsByAds(obj, cb) {
       if (err) {
         throw err;
       } else {
-        console.log("Updated User");
+        // console.log("Updated User");
       }
     }
   );

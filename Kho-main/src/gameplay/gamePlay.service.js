@@ -35,7 +35,7 @@ async function resetCoinsById(id, coin) {
       if (err) {
         throw err;
       } else {
-        console.log("Updated User");
+        //  console.log("Updated User");
       }
     }
   );
@@ -54,20 +54,25 @@ async function taskDone(io, obj, socket) {
         });
 
         game.markModified("tasksDone");
-        await game.save();
+
         if (game.tasksDone[i].taskDone.length >= 10) {
           game.winnerId = obj.id;
           resetCoinsById(obj.id, 150);
-
-          io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
-          endGame(obj.game_id, io);
+          io.to(obj.game_id).emit("GAMEEND", {
+            status: 200,
+            winnerId: game.winnerId,
+          });
           await game.save();
+          endGame(obj.game_id, io);
+
           let m = [];
           m.push(8);
           m.push(9);
           m.push(10);
           m.push(11);
           missionDoneMany(obj.id, m, obj, socket);
+        } else {
+          await game.save();
         }
 
         break;
@@ -230,7 +235,7 @@ async function construct(io, obj, socket, cb) {
       missionDoneMany(obj.id, m, obj, socket);
     }, t);
     user.timerId = timer;
-    console.log("timer " + timer);
+    // console.log("timer " + timer);
     await user.save();
     //cancelTimer(io, obj, socket, cb,timer);
   }
@@ -256,7 +261,7 @@ async function cancelTimer(io, obj, socket, cb, timer) {
     user.timers.push(data);
     user.coins = user.coins - obj.cost;
     user.markModified("timers");
-    console.log("CANCEL TIMER" + user.timerId);
+    // console.log("CANCEL TIMER" + user.timerId);
     clearTimeout(user.timerId);
     cb({
       status: 200,
@@ -307,11 +312,11 @@ async function cancelTimer(io, obj, socket, cb, timer) {
     }, t);
   }
   user.timerId = timer;
-  console.log("timer " + timer);
+  // console.log("timer " + timer);
   await user.save();
 }
 async function upgrade(io, obj, socket, cb) {
-  console.log("upgrade calls " + obj.id);
+  // console.log("upgrade calls " + obj.id);
   let user = await User.findById(obj.id);
   if (user) {
     if (!Array.isArray(user.timers)) {
@@ -376,7 +381,7 @@ async function upgrade(io, obj, socket, cb) {
     }, t);
     user.timerId = timer;
     await user.save();
-    console.log("timer " + timer);
+    // console.log("timer " + timer);
   }
 }
 
@@ -384,7 +389,7 @@ async function aiTurn(io, round, id, pegType, color) {
   let data = { _id: id, game_id: round.gameId, rolled: true };
   let randomTime = (Math.floor(Math.random() * 10) + 3) * 1000;
   setTimeout(async () => {
-    console.log("dice thrown");
+    // console.log("dice thrown");
     await diceRolled(io, data);
     let pegId = 0;
     if (round.pegsCanMove.length > 0) {
@@ -408,11 +413,11 @@ async function aiTurn(io, round, id, pegType, color) {
       };
       let randomTime = (Math.floor(Math.random() * 10) + 3) * 1000;
       setTimeout(async () => {
-        console.log("round change");
+        //  console.log("round change");
         roundChange(io, data2);
       }, 3000);
     } else {
-      console.log("round change");
+      //  console.log("round change");
       let data2 = {
         id: id,
         pegId: pegId,
@@ -440,7 +445,7 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
   if (gameplay && room) {
     user.bet = 0;
 
-    console.log("ROOM    dd" + room.name + "   " + gameId);
+    // console.log("ROOM    dd" + room.name + "   " + gameId);
 
     if (!Array.isArray(room.players_joined)) {
       room.players_joined = [];
@@ -479,7 +484,10 @@ async function leavetheGame(gameId, userId, socket, quit, io) {
       //  gameplay.winnerId = room.players_joined[0]._id;
 
       await gameplay.save();
-      io.to(room._id).emit("GAMEEND", { status: 200, gameplay: gameplay });
+      io.to(room._id).emit("GAMEEND", {
+        status: 200,
+        winnerId: gameplay.winnerId,
+      });
       await endGame(gameId, io);
     }
   }
@@ -506,7 +514,7 @@ async function endGame(gameId, io) {
       user.save();
     }
   }
-  console.log("game ends");
+  //console.log("game ends");
   //  await Round.deleteOne({ gameId: gameId });
   await Room.deleteOne({ _id: gamePlay.game_id });
   await GamePlay.deleteOne({ game_id: gamePlay.game_id });
