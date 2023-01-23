@@ -178,7 +178,7 @@ router.post("/users/minimumData", async (req, res) => {
         wins: user.wins,
         avatar: user.avatar,
         name: user.name,
-        delievery: delievery,
+        delievery: user.delievery,
       };
       res.send({ status: 200, message: d });
     }
