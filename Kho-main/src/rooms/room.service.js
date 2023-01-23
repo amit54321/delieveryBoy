@@ -19,14 +19,13 @@ module.exports = {
   chat,
   setCoin,
   resetCoinsByAds,
-  resetCoinsById
+  resetCoinsById,
 };
 
 async function chat(obj, socket, io, cb) {
   let room = await Room.findById(obj.gameId);
- 
+
   if (room) {
-   
     io.to(room._id).emit("CHATCALLBACK", { chat: obj });
   }
 }
@@ -72,15 +71,14 @@ async function createRoom(obj, socket, io, cb) {
     room.no_of_players = obj.numberOfPlayers;
     room.status = 0;
     room.name = obj.roomName;
-   // user.bet = obj.bet;
+    // user.bet = obj.bet;
     room.bet = obj.bet;
     room._public = obj._public;
     room.code = Math.floor(Math.random() * 999999) + 100000;
-    let r = await Room.findOne({code : room.code});
-    while(r!=null)
-    {
+    let r = await Room.findOne({ code: room.code });
+    while (r != null) {
       room.code = Math.floor(Math.random() * 999999) + 100000;
-       r = await Room.findOne({code : room.code});
+      r = await Room.findOne({ code: room.code });
     }
     let time = obj.time;
     if (!time) {
@@ -110,7 +108,7 @@ async function createRoom(obj, socket, io, cb) {
         let gameplay = await GamePlay.findOne({ game_id: tempRoom._id });
         if (!gameplay) {
           if (tempRoom._public == 1 && tempRoom.players_joined.length > 0) {
-            makeAI(tempRoom, io,socket);
+            makeAI(tempRoom, io, socket);
 
             return;
           }
@@ -155,21 +153,21 @@ async function createRoom(obj, socket, io, cb) {
     });
   }
 }
-async function makeAI(room, io,socket) {
+async function makeAI(room, io, socket) {
   let playersRequired = room.no_of_players - room.players_joined.length;
   console.log("Players  " + playersRequired);
   for (let i = 0; i < playersRequired; i++) {
     let user = await User.findOne({
       $and: [{ game_id: null }, { role: "ai" }, { room_id: null }],
     });
-    
+
     if (!user) {
       user = await createAiUser();
     }
     if (!Array.isArray(room.players_joined)) {
       room.players_joined = [];
     }
-   
+
     user.room_id = room._id;
     room.players_joined.push(user);
     user.save();
@@ -206,8 +204,7 @@ async function makeAI(room, io,socket) {
         }
       }
     );
-  
-   
+
     let gameplay = new GamePlay();
     gameplay.time = 152;
     gameplay.game_id = room._id;
@@ -219,68 +216,60 @@ async function makeAI(room, io,socket) {
       gameplay.users_data = [];
     }
     gameplay.round = 1;
-    let aiUser =0;
+    let aiUser = 0;
     for (let i = 0; i < room.players_joined.length; i++) {
-
       gameplay.users_data.push(room.players_joined[i]);
-      let user =  await  User.findById(room.players_joined[i]._id);
-      user.game_id = gameplay.game_id ;
-      if(user.role=="ai")
-      {
-        aiUser =user._id;
+      let user = await User.findById(room.players_joined[i]._id);
+      user.game_id = gameplay.game_id;
+      if (user.role == "ai") {
+        aiUser = user._id;
       }
-      user.matches = user.matches+1;
-       user.save();
-   
-      let  tasksData = new TaskDone();
-      if (!Array.isArray( tasksData.taskDone)) {
+      user.matches = user.matches + 1;
+      user.save();
+
+      let tasksData = new TaskDone();
+      if (!Array.isArray(tasksData.taskDone)) {
         tasksData.taskDone = [];
       }
-      tasksData.id =room.players_joined[i]._id;
-     gameplay.tasksDone.push(tasksData);
+      tasksData.id = room.players_joined[i]._id;
+      gameplay.tasksDone.push(tasksData);
     }
     gameplay.save();
     setTimeout(async () => {
       if (gameplay) {
         await resetCoins(room);
-        if (!Array.isArray( gameplay.tasks)) {
+        if (!Array.isArray(gameplay.tasks)) {
           gameplay.tasks = [];
         }
-        for(let i=1;i<=10;i++)
-        {
+        for (let i = 1; i <= 10; i++) {
           let p = new PegsData();
-          p.id=i;
-          p.restaurantId =Math.floor(Math.random() * (10 - 1 + 1) + 1);
-          p.customerId=Math.floor(Math.random() * (10 - 1 + 1) + 1);
+          p.id = i;
+          p.restaurantId = Math.floor(Math.random() * (10 - 1 + 1) + 1);
+          p.customerId = Math.floor(Math.random() * (10 - 1 + 1) + 1);
           gameplay.tasks.push(p);
-        
-        } 
+        }
         gameplay.markModified("tasks");
         gameplay.save();
         io.to(room._id).emit("STARTGAME", { status: 200, gameplay: gameplay });
         for (let i = 0; i < room.players_joined.length; i++) {
-
-          playGameMission(room.players_joined[i]._id,socket);
+          playGameMission(room.players_joined[i]._id, socket);
         }
-           if(aiUser!=0)
-           {
-             let last =0;
-          for(let i=1;i<=10;i++)
-            {
-             let t = last +  (Math.floor(Math.random() * (40 - 1 + 1) + 15)) *1000;
-             last =t;
+        if (aiUser != 0) {
+          let last = 0;
+          for (let i = 1; i <= 10; i++) {
+            // let t = last +  (Math.floor(Math.random() * (40 - 1 + 1) + 15)) *1000;
+            let t = last + Math.floor(Math.random() * (4 - 1 + 1) + 2) * 1000;
+            last = t;
             setTimeout(async () => {
               let data = {
-              id :aiUser,
-              taskId : i,
-              game_id : gameplay.game_id
-              }
-              await gameplayService.taskDone(io,data);
-
+                id: aiUser,
+                taskId: i,
+                game_id: gameplay.game_id,
+              };
+              await gameplayService.taskDone(io, data);
             }, t);
           }
         }
-      
       } else {
       }
     }, 2000);
@@ -298,24 +287,22 @@ async function createAiUser() {
     ];
   user.is_online = 1;
   user.role = "ai";
-  user.coins= 1000;
-  user.avatar =  (Math.floor(Math.random() * 4) + 0).toString();
+  user.coins = 1000;
+  user.avatar = (Math.floor(Math.random() * 4) + 0).toString();
   user.token = "Guest" + new Date().toISOString();
-  if (!Array.isArray( user.restaurants)) {
+  if (!Array.isArray(user.restaurants)) {
     user.restaurants = [];
   }
-  for(let i=1;i<=10;i++)
-  {
-
-    let data2 = {      
+  for (let i = 1; i <= 10; i++) {
+    let data2 = {
       plot_id: i,
-      restaurant_id:i,
-      level:Math.floor(Math.random() * (10 - 1 + 1) + 1)
+      restaurant_id: i,
+      level: Math.floor(Math.random() * (10 - 1 + 1) + 1),
     };
-    
+
     user.restaurants.push(data2);
     user.markModified("restaurants");
-  } 
+  }
   console.log("player created " + user.name);
   ai_user = await user.save();
   return user;
@@ -403,9 +390,9 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         },
       },
     ]);
-  
+
     console.log("ROOM  " + roomLength.length);
-    if (roomLength.length > 0 && roomLength[0].end_time - Date.now()>=0) {
+    if (roomLength.length > 0 && roomLength[0].end_time - Date.now() >= 0) {
       let room = roomLength[0];
       if (!Array.isArray(room.players_joined)) {
         room.players_joined = [];
@@ -413,7 +400,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
 
       room.players_joined.push(user);
       user.room_id = room._id;
-    //  user.bet = obj.bet;
+      //  user.bet = obj.bet;
       mongoose.set("useFindAndModify", false);
       Room.findByIdAndUpdate(
         room._id,
@@ -440,7 +427,7 @@ async function lookForPublicRoom(obj, socket, io, cb) {
         status: 200,
         message: "You have joined the room",
         room: room,
-        timeLeft: timeLeft
+        timeLeft: timeLeft,
       });
       if (room.no_of_players === room.players_joined.length) {
         Room.findByIdAndUpdate(
@@ -456,30 +443,29 @@ async function lookForPublicRoom(obj, socket, io, cb) {
           }
         );
 
-      console.log("INSIDE ROOM PLAYERS")
+        console.log("INSIDE ROOM PLAYERS");
         let gameplay = new GamePlay();
         gameplay.game_id = room._id;
-       if (!Array.isArray(gameplay.tasksDone)) {
-         gameplay.tasksDone = [];
+        if (!Array.isArray(gameplay.tasksDone)) {
+          gameplay.tasksDone = [];
         }
         if (!Array.isArray(gameplay.users_data)) {
           gameplay.users_data = [];
         }
-      
+
         for (let i = 0; i < room.players_joined.length; i++) {
           gameplay.users_data.push(room.players_joined[i]);
-          let user = await  User.findById(room.players_joined[i]._id);
-          user.game_id = gameplay.game_id ;
-          
-          user.matches = user.matches+1;
-           user.save();
-       
-           
-          let  tasksData = new TaskDone();
-          if (!Array.isArray( tasksData.taskDone)) {
+          let user = await User.findById(room.players_joined[i]._id);
+          user.game_id = gameplay.game_id;
+
+          user.matches = user.matches + 1;
+          user.save();
+
+          let tasksData = new TaskDone();
+          if (!Array.isArray(tasksData.taskDone)) {
             tasksData.taskDone = [];
           }
-          tasksData.id =room.players_joined[i]._id;
+          tasksData.id = room.players_joined[i]._id;
           await gameplay.tasksDone.push(tasksData);
         }
         gameplay.save();
@@ -487,38 +473,34 @@ async function lookForPublicRoom(obj, socket, io, cb) {
           if (gameplay) {
             await resetCoins(room);
             console.log("gameplay calls");
-            if (!Array.isArray( gameplay.tasks)) {
+            if (!Array.isArray(gameplay.tasks)) {
               gameplay.tasks = [];
             }
-            for(let i=1;i<=10;i++)
-            {
+            for (let i = 1; i <= 10; i++) {
               let p = new PegsData();
-              p.id=i;
-              p.restaurantId =Math.floor(Math.random() * (10 - 1 + 1) + 1);
-              p.customerId=Math.floor(Math.random() * (10 - 1 + 1) + 1);
+              p.id = i;
+              p.restaurantId = Math.floor(Math.random() * (10 - 1 + 1) + 1);
+              p.customerId = Math.floor(Math.random() * (10 - 1 + 1) + 1);
               gameplay.tasks.push(p);
-             
-            } 
+            }
             gameplay.markModified("tasks");
-            await  gameplay.save();
-           
+            await gameplay.save();
+
             io.to(room._id).emit("STARTGAME", {
               status: 200,
               gameplay: gameplay,
             });
-          //   gameplay.save();
-          for (let i = 0; i < room.players_joined.length; i++) {
-            playGameMission(room.players_joined[i]._id,socket);
-          
-          
-          }
+            //   gameplay.save();
+            for (let i = 0; i < room.players_joined.length; i++) {
+              playGameMission(room.players_joined[i]._id, socket);
+            }
           } else {
           }
         }, 3000);
         ///STRT GAME HERE
       }
     } else {
-      console.log("INSIDE CREATE ROOM")
+      console.log("INSIDE CREATE ROOM");
       await createRoom(obj, socket, io, cb);
     }
   }
@@ -537,22 +519,17 @@ async function checkGame(obj, socket, io, cb) {
   }
 }
 
-async function  playGameMission(id,socket)
-{
-  let obj = {      
-    
-  };
+async function playGameMission(id, socket) {
+  let obj = {};
   setTimeout(async () => {
-    gameplayService.missionDone(id,0, obj, socket);
-    setTimeout(async () => { 
-      gameplayService. missionDone(id,1, obj, socket);
-     setTimeout(async () => { 
-      gameplayService.missionDone(id,2, obj, socket);
-     
-      
-      },  600); 
-    },  600); 
-   },  600); 
+    gameplayService.missionDone(id, 0, obj, socket);
+    setTimeout(async () => {
+      gameplayService.missionDone(id, 1, obj, socket);
+      setTimeout(async () => {
+        gameplayService.missionDone(id, 2, obj, socket);
+      }, 600);
+    }, 600);
+  }, 600);
 }
 
 async function joinRoom(obj, socket, io, cb) {
@@ -567,7 +544,7 @@ async function joinRoom(obj, socket, io, cb) {
         room.players_joined.push(user);
         room = await room.save();
         user.room_id = room._id;
-      //  user.bet = obj.bet;
+        //  user.bet = obj.bet;
         user.save();
         let timeLeft = room.end_time - Date.now();
         io.to(room._id).emit("ONROOMJOINED", {
@@ -595,7 +572,7 @@ async function joinRoom(obj, socket, io, cb) {
               }
             }
           );
-        
+
           let gameplay = new GamePlay();
           gameplay.game_id = room._id;
           if (!Array.isArray(gameplay.tasksDone)) {
@@ -604,59 +581,50 @@ async function joinRoom(obj, socket, io, cb) {
           if (!Array.isArray(gameplay.users_data)) {
             gameplay.users_data = [];
           }
-      
-          for (let i = 0; i < room.players_joined.length; i++) {
 
+          for (let i = 0; i < room.players_joined.length; i++) {
             gameplay.users_data.push(room.players_joined[i]);
 
-            let user =   await User.findById(room.players_joined[i]._id);
-            user.game_id = gameplay.game_id ;
-            user.matches = user.matches+1;
-             user.save();
-     
-             
-            let  tasksData = new TaskDone();
-            if (!Array.isArray( tasksData.taskDone)) {
+            let user = await User.findById(room.players_joined[i]._id);
+            user.game_id = gameplay.game_id;
+            user.matches = user.matches + 1;
+            user.save();
+
+            let tasksData = new TaskDone();
+            if (!Array.isArray(tasksData.taskDone)) {
               tasksData.taskDone = [];
             }
-            tasksData.id =room.players_joined[i]._id;
-           
+            tasksData.id = room.players_joined[i]._id;
+
             gameplay.tasksDone.push(tasksData);
           }
-       
+
           gameplay.save();
 
           setTimeout(async () => {
             if (gameplay) {
               await resetCoins(room);
               console.log("gameplay calls");
-              if (!Array.isArray( gameplay.tasks)) {
+              if (!Array.isArray(gameplay.tasks)) {
                 gameplay.tasks = [];
               }
-              for(let i=1;i<=10;i++)
-              {
+              for (let i = 1; i <= 10; i++) {
                 let p = new PegsData();
-                p.id=i;
-                p.restaurantId =Math.floor(Math.random() * (10 - 1 + 1) + 1);
-                p.customerId=Math.floor(Math.random() * (10 - 1 + 1) + 1);
+                p.id = i;
+                p.restaurantId = Math.floor(Math.random() * (10 - 1 + 1) + 1);
+                p.customerId = Math.floor(Math.random() * (10 - 1 + 1) + 1);
                 gameplay.tasks.push(p);
-               
-              } 
+              }
               gameplay.markModified("tasks");
               gameplay.save();
               io.to(room._id).emit("STARTGAME", {
                 status: 200,
                 gameplay: gameplay,
               });
-         
+
               for (let i = 0; i < room.players_joined.length; i++) {
-
-                playGameMission(room.players_joined[i]._id,socket);
-              
-            }
-
-
-
+                playGameMission(room.players_joined[i]._id, socket);
+              }
             } else {
             }
           }, 2000);
@@ -703,29 +671,24 @@ async function resetCoins(room) {
     );
   }
 }
-async function resetCoinsById(id,coin) {
-  
-    User.findByIdAndUpdate(
-     id,
-      {
-       
-          $inc : { "coins" : coin } ,
-        
-      },
-      { new: true },
-      function (err, doc) {
-        if (err) {
-          throw err;
-        } else {
-          console.log("Updated User");
-        }
+async function resetCoinsById(id, coin) {
+  User.findByIdAndUpdate(
+    id,
+    {
+      $inc: { coins: coin },
+    },
+    { new: true },
+    function (err, doc) {
+      if (err) {
+        throw err;
+      } else {
+        console.log("Updated User");
       }
-    );
-  
+    }
+  );
 }
 
 async function resetCoinsByAds(obj, cb) {
-
   User.findByIdAndUpdate(
     obj._id,
     {
@@ -738,7 +701,6 @@ async function resetCoinsByAds(obj, cb) {
       if (err) {
         throw err;
       } else {
-        
         console.log("Updated User");
       }
     }

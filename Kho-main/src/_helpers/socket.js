@@ -26,24 +26,19 @@ module.exports = function (io) {
     let secret = "amitscreatingthisprojectToManuplulate";
     let isRevoked = socket.handshake.query.token;
 
-
-    try{
+    try {
       // const decoded = jwt.verify(isRevoked.trim(), secret);
       //  all_users[socket.id] = decoded.sub;
-      console.log(
-        " On Network" + socket.id + "   " + isRevoked
-      );
+      console.log(" On Network" + socket.id + "   " + isRevoked);
       let user = await User.findById(isRevoked);
       user.socket_id = socket.id;
       user.is_online = 1;
       await user.save();
       socket.emit("UPDATEDUSER", { status: 200, message: user });
 
-
       socket.join(isRevoked);
 
       if (user.game_id != null) {
-
         let gameplay = await GamePlay.findOne({ game_id: user.game_id });
         if (gameplay) {
           socket.leave(user.game_id);
@@ -54,8 +49,6 @@ module.exports = function (io) {
           });
         }
       }
-
-
 
       console.log(" USER " + user);
     } catch (err) {
@@ -72,7 +65,7 @@ module.exports = function (io) {
     });
     socket.on("TASKDONE", async (obj, cb) => {
       console.log({ obj });
-      await gamePlay.taskDone(io, obj);
+      await gamePlay.taskDone(io, obj, socket);
     });
 
     socket.on("CHECKROOM", async (obj, cb) => {
@@ -115,8 +108,6 @@ module.exports = function (io) {
       await gamePlay.addPlayerPegs(obj, cb)
     }); */
 
-
-
     socket.on("CONSTRUCT", async (obj, cb) => {
       console.log({ obj });
       await gamePlay.construct(io, obj, socket, cb);
@@ -134,8 +125,6 @@ module.exports = function (io) {
       console.log({ obj });
       await gamePlay.quitGame(obj, socket, io);
     });
-
-
 
     socket.on("GETALLCHATS", async (obj, cb) => {
       console.log({ obj });
@@ -175,7 +164,7 @@ module.exports = function (io) {
       console.log({ obj });
       await gamePlay.cancelTimer(io, obj, socket, cb);
     });
-    
+
     async function playerOffline(socket) {
       console.log({ socket });
       let user = await User.findOne({ socket_id: socket });

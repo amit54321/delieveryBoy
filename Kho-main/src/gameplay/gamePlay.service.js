@@ -40,7 +40,7 @@ async function resetCoinsById(id, coin) {
     }
   );
 }
-async function taskDone(io, obj) {
+async function taskDone(io, obj, socket) {
   let game = await GamePlay.findOne({ game_id: obj.game_id });
   if (game) {
     for (let i = 0; i < game.tasksDone.length; i++) {
@@ -58,10 +58,18 @@ async function taskDone(io, obj) {
         if (game.tasksDone[i].taskDone.length >= 10) {
           game.winnerId = obj.id;
           resetCoinsById(obj.id, 150);
+
           io.to(obj.game_id).emit("GAMEEND", { status: 200, message: game });
           endGame(obj.game_id, io);
           await game.save();
+          let m = [];
+          m.push(8);
+          m.push(9);
+          m.push(10);
+          m.push(11);
+          missionDoneMany(obj.id, m, obj, socket);
         }
+
         break;
       }
     }
@@ -130,7 +138,7 @@ async function missionDoneMany(_id, missionId, obj, socket) {
         }
       }
     }
-    if (missions.length > 0) {
+    if (missions.length > 0 && socket != null) {
       socket.emit("MISSIONCOMPLETE", {
         missionDone: missions,
       });
@@ -503,15 +511,15 @@ async function endGame(gameId, io) {
   await Room.deleteOne({ _id: gamePlay.game_id });
   await GamePlay.deleteOne({ game_id: gamePlay.game_id });
 
-  io.of("/")
-    .in(gamePlay.game_id)
+  /*  io.of("/")
+    .in(gameId)
     .clients((err, clients) => {
+      console.log("TOTAL CLIENTS " + clients.length);
+      // clients.forEach((clientId) =>
+      //io.sockets.connected[clientId].disconnect()
+      // );
       console.log(clients.length);
-      clients.forEach((clientId) =>
-        io.sockets.connected[clientId].disconnect()
-      );
-      console.log(clients.length);
-    });
+    }); */
 }
 
 async function useTimerPack(obj, cb) {
